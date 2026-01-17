@@ -130,43 +130,67 @@ const DeAISubnetDashboard = () => {
   const valuationCounts = subnets.reduce((a, s) => { const pe = calculatePERatio(s); if (pe.icon === 'undervalued') a.undervalued++; else if (pe.icon === 'overbought') a.overbought++; else a.fair++; return a; }, { undervalued: 0, fair: 0, overbought: 0 });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900 p-4 md:p-6">
-      <div className="max-w-7xl mx-auto mb-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white flex items-center gap-3"><Zap className="text-purple-400" />DeAI Subnet Dashboard</h1>
-            <p className="text-gray-400 mt-1">Bittensor subnet analysis • TAO: ${taoPrice.toFixed(2)}</p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950 p-4 md:p-8">
+      <div className="max-w-7xl mx-auto mb-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
+          <div className="space-y-2">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent flex items-center gap-3 animate-gradient">
+              <Zap className="text-purple-400 animate-pulse" size={40} />DeAI Subnet Dashboard
+            </h1>
+            <p className="text-gray-400 text-lg">Bittensor subnet analysis • <span className="text-purple-400 font-semibold">TAO: ${taoPrice.toFixed(2)}</span></p>
           </div>
-          <div className="flex gap-2">
-            <button onClick={() => setShowMethodology(!showMethodology)} className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg flex items-center gap-2 text-sm"><Info size={16} />Methodology</button>
-            <button onClick={() => setCurrencyMode(currencyMode === 'usd' ? 'tao' : 'usd')} className="px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg flex items-center gap-2 text-sm"><DollarSign size={16} />{currencyMode.toUpperCase()}</button>
+          <div className="flex gap-3">
+            <button onClick={() => setShowMethodology(!showMethodology)} className="px-4 py-2.5 bg-slate-800/80 hover:bg-slate-700 text-white rounded-xl flex items-center gap-2 text-sm font-medium transition-all hover:scale-105 border border-slate-700 hover:border-purple-500/50 shadow-lg">
+              <Info size={18} />Methodology
+            </button>
+            <button onClick={() => setCurrencyMode(currencyMode === 'usd' ? 'tao' : 'usd')} className="px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white rounded-xl flex items-center gap-2 text-sm font-medium transition-all hover:scale-105 shadow-lg shadow-purple-500/30">
+              <DollarSign size={18} />{currencyMode.toUpperCase()}
+            </button>
           </div>
         </div>
         {showMethodology && (
-          <div className="bg-slate-800/80 rounded-xl p-5 mb-6 border border-purple-500/30 text-sm">
-            <h3 className="text-lg font-bold text-white mb-3">Scoring Methodology</h3>
-            <div className="grid md:grid-cols-3 gap-4">
-              <div><h4 className="text-purple-400 font-semibold mb-2">Price & Market Cap</h4><p className="text-gray-300">• Alpha Price = TAO in Pool ÷ Alpha in Pool</p><p className="text-gray-300">• Market Cap = Price × Circulating Supply</p><p className="text-gray-300">• Liquidity = 2 × TAO in Pool</p></div>
-              <div><h4 className="text-purple-400 font-semibold mb-2">DeAI Score (75%)</h4><p className="text-gray-300">Economic 25% | Network 25% | Valuation 15% | Liquidity 15% | Momentum 10% | Quality 10%</p></div>
-              <div><h4 className="text-purple-400 font-semibold mb-2">P/E Ratio = MCap ÷ Daily Emission</h4><p className="text-emerald-400">Undervalued: P/E &lt; 0.25</p><p className="text-yellow-400">Fair Value: 0.25-0.40</p><p className="text-red-400">Overbought: P/E &gt; 0.40</p></div>
+          <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm rounded-2xl p-6 mb-6 border border-purple-500/40 shadow-2xl shadow-purple-500/20 animate-fadeIn">
+            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><BarChart3 size={24} className="text-purple-400" />Scoring Methodology</h3>
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700"><h4 className="text-purple-400 font-semibold mb-3 text-base">Price & Market Cap</h4><p className="text-gray-300 text-sm leading-relaxed">• Alpha Price = TAO in Pool ÷ Alpha in Pool</p><p className="text-gray-300 text-sm leading-relaxed">• Market Cap = Price × Circulating Supply</p><p className="text-gray-300 text-sm leading-relaxed">• Liquidity = 2 × TAO in Pool</p></div>
+              <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700"><h4 className="text-purple-400 font-semibold mb-3 text-base">DeAI Score (75%)</h4><p className="text-gray-300 text-sm leading-relaxed">Economic 25% | Network 25% | Valuation 15% | Liquidity 15% | Momentum 10% | Quality 10%</p></div>
+              <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700"><h4 className="text-purple-400 font-semibold mb-3 text-base">P/E Ratio = MCap ÷ Daily Emission</h4><p className="text-emerald-400 text-sm">Undervalued: P/E &lt; 0.25</p><p className="text-yellow-400 text-sm">Fair Value: 0.25-0.40</p><p className="text-red-400 text-sm">Overbought: P/E &gt; 0.40</p></div>
             </div>
           </div>
         )}
       </div>
 
-      <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-6 gap-3 mb-6">
-        <div className="bg-slate-800/60 rounded-xl p-4 border border-purple-500/30"><div className="text-gray-400 text-xs mb-1">Subnets</div><div className="text-2xl font-bold text-white">{subnets.length}</div></div>
-        <div className="bg-slate-800/60 rounded-xl p-4 border border-purple-500/30"><div className="text-gray-400 text-xs mb-1">Avg Score</div><div className={`text-2xl font-bold ${getScoreColor(avgComposite)}`}>{avgComposite}</div></div>
-        <div className="bg-slate-800/60 rounded-xl p-4 border border-purple-500/30"><div className="text-gray-400 text-xs mb-1">Avg P/E</div><div className="text-2xl font-bold text-purple-400">{avgPE}</div></div>
-        <div className="bg-slate-800/60 rounded-xl p-4 border border-emerald-500/30"><div className="text-gray-400 text-xs mb-1 flex items-center gap-1"><ThumbsUp size={12} className="text-emerald-400" />Undervalued</div><div className="text-2xl font-bold text-emerald-400">{valuationCounts.undervalued}</div></div>
-        <div className="bg-slate-800/60 rounded-xl p-4 border border-yellow-500/30"><div className="text-gray-400 text-xs mb-1 flex items-center gap-1"><Scale size={12} className="text-yellow-400" />Fair Value</div><div className="text-2xl font-bold text-yellow-400">{valuationCounts.fair}</div></div>
-        <div className="bg-slate-800/60 rounded-xl p-4 border border-red-500/30"><div className="text-gray-400 text-xs mb-1 flex items-center gap-1"><AlertTriangle size={12} className="text-red-400" />Overbought</div><div className="text-2xl font-bold text-red-400">{valuationCounts.overbought}</div></div>
+      <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
+        <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur rounded-2xl p-5 border border-purple-500/40 hover:border-purple-400/60 transition-all hover:scale-105 shadow-lg hover:shadow-purple-500/20 group">
+          <div className="text-gray-400 text-xs mb-2 font-medium uppercase tracking-wider">Subnets</div>
+          <div className="text-3xl font-bold text-white group-hover:text-purple-400 transition-colors">{subnets.length}</div>
+        </div>
+        <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur rounded-2xl p-5 border border-purple-500/40 hover:border-purple-400/60 transition-all hover:scale-105 shadow-lg hover:shadow-purple-500/20 group">
+          <div className="text-gray-400 text-xs mb-2 font-medium uppercase tracking-wider">Avg Score</div>
+          <div className={`text-3xl font-bold ${getScoreColor(avgComposite)} transition-colors`}>{avgComposite}</div>
+        </div>
+        <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur rounded-2xl p-5 border border-purple-500/40 hover:border-purple-400/60 transition-all hover:scale-105 shadow-lg hover:shadow-purple-500/20 group">
+          <div className="text-gray-400 text-xs mb-2 font-medium uppercase tracking-wider">Avg P/E</div>
+          <div className="text-3xl font-bold text-purple-400 group-hover:text-purple-300 transition-colors">{avgPE}</div>
+        </div>
+        <div className="bg-gradient-to-br from-emerald-900/30 to-slate-900/80 backdrop-blur rounded-2xl p-5 border border-emerald-500/40 hover:border-emerald-400/60 transition-all hover:scale-105 shadow-lg hover:shadow-emerald-500/20 group">
+          <div className="text-gray-400 text-xs mb-2 flex items-center gap-1.5 font-medium uppercase tracking-wider"><ThumbsUp size={14} className="text-emerald-400" />Undervalued</div>
+          <div className="text-3xl font-bold text-emerald-400 group-hover:text-emerald-300 transition-colors">{valuationCounts.undervalued}</div>
+        </div>
+        <div className="bg-gradient-to-br from-yellow-900/30 to-slate-900/80 backdrop-blur rounded-2xl p-5 border border-yellow-500/40 hover:border-yellow-400/60 transition-all hover:scale-105 shadow-lg hover:shadow-yellow-500/20 group">
+          <div className="text-gray-400 text-xs mb-2 flex items-center gap-1.5 font-medium uppercase tracking-wider"><Scale size={14} className="text-yellow-400" />Fair Value</div>
+          <div className="text-3xl font-bold text-yellow-400 group-hover:text-yellow-300 transition-colors">{valuationCounts.fair}</div>
+        </div>
+        <div className="bg-gradient-to-br from-red-900/30 to-slate-900/80 backdrop-blur rounded-2xl p-5 border border-red-500/40 hover:border-red-400/60 transition-all hover:scale-105 shadow-lg hover:shadow-red-500/20 group">
+          <div className="text-gray-400 text-xs mb-2 flex items-center gap-1.5 font-medium uppercase tracking-wider"><AlertTriangle size={14} className="text-red-400" />Overbought</div>
+          <div className="text-3xl font-bold text-red-400 group-hover:text-red-300 transition-colors">{valuationCounts.overbought}</div>
+        </div>
       </div>
 
-      <div className="max-w-7xl mx-auto flex gap-3 mb-6">
-        <div className="flex items-center gap-2 bg-slate-800/60 rounded-lg px-3 py-2 border border-purple-500/30">
-          <ArrowUpDown size={16} className="text-purple-400" />
-          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="bg-transparent text-white text-sm focus:outline-none">
+      <div className="max-w-7xl mx-auto flex flex-wrap gap-4 mb-8">
+        <div className="flex items-center gap-3 bg-gradient-to-r from-slate-800/80 to-slate-900/80 backdrop-blur rounded-xl px-5 py-3 border border-purple-500/40 shadow-lg hover:border-purple-400/60 transition-all">
+          <ArrowUpDown size={18} className="text-purple-400" />
+          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="bg-transparent text-white text-sm focus:outline-none cursor-pointer font-medium">
             <option value="compositeScore" className="bg-slate-800">Composite Score</option>
             <option value="peRatio" className="bg-slate-800">P/E Ratio (Low→High)</option>
             <option value="emissionYield" className="bg-slate-800">Emission Yield</option>
@@ -174,10 +198,11 @@ const DeAISubnetDashboard = () => {
             <option value="emission" className="bg-slate-800">Daily Emission</option>
           </select>
         </div>
-        <div className="flex items-center gap-2 bg-slate-800/60 rounded-lg px-3 py-2 border border-purple-500/30">
-          <Filter size={16} className="text-purple-400" /><span className="text-gray-400 text-sm">Min:</span>
-          <input type="range" min="0" max="80" value={filterMinScore} onChange={(e) => setFilterMinScore(Number(e.target.value))} className="w-20 accent-purple-500" />
-          <span className="text-white text-sm">{filterMinScore}</span>
+        <div className="flex items-center gap-3 bg-gradient-to-r from-slate-800/80 to-slate-900/80 backdrop-blur rounded-xl px-5 py-3 border border-purple-500/40 shadow-lg hover:border-purple-400/60 transition-all">
+          <Filter size={18} className="text-purple-400" />
+          <span className="text-gray-400 text-sm font-medium">Min Score:</span>
+          <input type="range" min="0" max="80" value={filterMinScore} onChange={(e) => setFilterMinScore(Number(e.target.value))} className="w-24 accent-purple-500 cursor-pointer" />
+          <span className="text-white text-sm font-bold bg-purple-500/20 px-3 py-1 rounded-lg min-w-[3rem] text-center">{filterMinScore}</span>
         </div>
       </div>
 
@@ -192,29 +217,29 @@ const DeAISubnetDashboard = () => {
           const isExpanded = expandedSubnet === subnet.id;
 
           return (
-            <div key={subnet.id} className="bg-slate-800/60 rounded-xl border border-purple-500/30 overflow-hidden hover:border-purple-400/60 transition-all">
-              <div className="p-4 md:p-5 cursor-pointer" onClick={() => setExpandedSubnet(isExpanded ? null : subnet.id)}>
+            <div key={subnet.id} className="bg-gradient-to-br from-slate-800/70 to-slate-900/70 backdrop-blur rounded-2xl border border-purple-500/40 overflow-hidden hover:border-purple-400/70 hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 group">
+              <div className="p-5 md:p-6 cursor-pointer" onClick={() => setExpandedSubnet(isExpanded ? null : subnet.id)}>
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
-                    <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-2">
-                      <span className="text-gray-500 text-sm font-mono">#{index + 1}</span>
-                      <h2 className="text-xl font-bold text-white">SN{subnet.id}: {subnet.name}</h2>
-                      <span className={`text-2xl font-bold ${grade.color}`}>{grade.grade}</span>
-                      <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium ${peData.icon === 'undervalued' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : peData.icon === 'overbought' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'}`}>
+                    <div className="flex flex-wrap items-center gap-3 mb-3">
+                      <span className="text-gray-500 text-sm font-mono bg-slate-700/50 px-2.5 py-1 rounded-lg">#{index + 1}</span>
+                      <h2 className="text-2xl font-bold bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">SN{subnet.id}: {subnet.name}</h2>
+                      <span className={`text-3xl font-bold ${grade.color} drop-shadow-lg`}>{grade.grade}</span>
+                      <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-lg ${peData.icon === 'undervalued' ? 'bg-gradient-to-r from-emerald-500/30 to-emerald-600/30 text-emerald-300 border border-emerald-400/50' : peData.icon === 'overbought' ? 'bg-gradient-to-r from-red-500/30 to-red-600/30 text-red-300 border border-red-400/50' : 'bg-gradient-to-r from-yellow-500/30 to-yellow-600/30 text-yellow-300 border border-yellow-400/50'}`}>
                         {getValuationIcon(peData.icon)}{peData.status}
                       </div>
                     </div>
-                    <p className="text-gray-400 text-sm mb-3">{subnet.description}</p>
-                    <div className="grid grid-cols-2 md:grid-cols-6 gap-3 text-sm">
-                      <div><div className="text-gray-500 text-xs">Alpha Price</div><div className="text-white font-semibold">{formatAlphaPrice(derived.alphaPrice)}</div></div>
-                      <div><div className="text-gray-500 text-xs">Market Cap</div><div className="text-white font-semibold">{formatValue(derived.marketCap)}</div></div>
-                      <div><div className="text-gray-500 text-xs">P/E Ratio</div><div className={`font-semibold ${peData.color}`}>{peData.ratio.toFixed(3)}</div></div>
-                      <div><div className="text-gray-500 text-xs">Emission Yield</div><div className="text-blue-400 font-semibold">{peData.emissionYield.toFixed(1)}%</div></div>
-                      <div><div className="text-gray-500 text-xs">Daily Emission</div><div className="text-white font-semibold">{formatValue(subnet.dailyEmission)}</div></div>
-                      <div><div className="text-gray-500 text-xs">Momentum</div><div className={`font-semibold flex items-center gap-1 ${subnet.priceMomentum >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{subnet.priceMomentum >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}{subnet.priceMomentum > 0 ? '+' : ''}{subnet.priceMomentum}%</div></div>
+                    <p className="text-gray-400 text-sm mb-4 leading-relaxed">{subnet.description}</p>
+                    <div className="grid grid-cols-2 md:grid-cols-6 gap-4 text-sm">
+                      <div className="bg-slate-700/30 rounded-lg p-2.5 border border-slate-600/50"><div className="text-gray-400 text-xs mb-1 font-medium">Alpha Price</div><div className="text-white font-bold">{formatAlphaPrice(derived.alphaPrice)}</div></div>
+                      <div className="bg-slate-700/30 rounded-lg p-2.5 border border-slate-600/50"><div className="text-gray-400 text-xs mb-1 font-medium">Market Cap</div><div className="text-white font-bold">{formatValue(derived.marketCap)}</div></div>
+                      <div className="bg-slate-700/30 rounded-lg p-2.5 border border-slate-600/50"><div className="text-gray-400 text-xs mb-1 font-medium">P/E Ratio</div><div className={`font-bold ${peData.color}`}>{peData.ratio.toFixed(3)}</div></div>
+                      <div className="bg-slate-700/30 rounded-lg p-2.5 border border-slate-600/50"><div className="text-gray-400 text-xs mb-1 font-medium">Emission Yield</div><div className="text-blue-400 font-bold">{peData.emissionYield.toFixed(1)}%</div></div>
+                      <div className="bg-slate-700/30 rounded-lg p-2.5 border border-slate-600/50"><div className="text-gray-400 text-xs mb-1 font-medium">Daily Emission</div><div className="text-white font-bold">{formatValue(subnet.dailyEmission)}</div></div>
+                      <div className="bg-slate-700/30 rounded-lg p-2.5 border border-slate-600/50"><div className="text-gray-400 text-xs mb-1 font-medium">Momentum</div><div className={`font-bold flex items-center gap-1 ${subnet.priceMomentum >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{subnet.priceMomentum >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}{subnet.priceMomentum > 0 ? '+' : ''}{subnet.priceMomentum}%</div></div>
                     </div>
                   </div>
-                  <div>{isExpanded ? <ChevronUp size={20} className="text-purple-400" /> : <ChevronDown size={20} className="text-purple-400" />}</div>
+                  <div className="transition-transform group-hover:scale-110">{isExpanded ? <ChevronUp size={24} className="text-purple-400" /> : <ChevronDown size={24} className="text-purple-400" />}</div>
                 </div>
               </div>
 

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeAI Subnet Dashboard - Preview</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes gradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .animate-gradient {
+            background-size: 200% 200%;
+            animation: gradient 3s ease infinite;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useMemo } = React;
+        const { Zap, Info, DollarSign, BarChart3, ThumbsUp, Scale, AlertTriangle, ArrowUpDown, Filter, 
+                ChevronDown, ChevronUp, TrendingUp, TrendingDown, Gauge, Activity, Users, Code, Shield } = lucide;
+
+        const DeAISubnetDashboard = () => {
+            const [expandedSubnet, setExpandedSubnet] = useState(null);
+            const [currencyMode, setCurrencyMode] = useState('usd');
+            const [sortBy, setSortBy] = useState('compositeScore');
+            const [filterMinScore, setFilterMinScore] = useState(0);
+            const [showMethodology, setShowMethodology] = useState(false);
+            const [taoPrice] = useState(283.63);
+
+            const subnets = [
+                { id: 1, name: "Apex", description: "Text prompting and LLM generation", dailyEmission: 542.3, taoInPool: 82.5, alphaInPool: 1650, circulatingSupply: 3200, recycleCost: 3.8, totalStake: 3420, validatorCount: 72, uidUtilization: 98, emissionShare: 2.8, priceMomentum: 12.5, emissionTrend: 8.3, netFlow: "positive", age: 16, validatorDiversity: 0.54, githubCommits: 234, githubContributors: 12, testCoverage: 78, securityAudit: true, lastCommit: 2, weeklyActiveMiners: 156, successRate: 99.2 },
+                { id: 8, name: "Taoshi", description: "Financial predictions and trading signals", dailyEmission: 498.7, taoInPool: 76.4, alphaInPool: 1820, circulatingSupply: 2950, recycleCost: 3.5, totalStake: 2960, validatorCount: 68, uidUtilization: 100, emissionShare: 2.6, priceMomentum: 18.2, emissionTrend: 11.5, netFlow: "positive", age: 14, validatorDiversity: 0.58, githubCommits: 189, githubContributors: 9, testCoverage: 72, securityAudit: true, lastCommit: 1, weeklyActiveMiners: 142, successRate: 98.7 },
+                { id: 19, name: "Vision", description: "Computer vision and image analysis", dailyEmission: 490.2, taoInPool: 68.3, alphaInPool: 1580, circulatingSupply: 2780, recycleCost: 3.2, totalStake: 2580, validatorCount: 64, uidUtilization: 96, emissionShare: 2.4, priceMomentum: 15.7, emissionTrend: 9.8, netFlow: "positive", age: 12, validatorDiversity: 0.61, githubCommits: 156, githubContributors: 8, testCoverage: 68, securityAudit: true, lastCommit: 3, weeklyActiveMiners: 128, successRate: 97.5 },
+                { id: 24, name: "Omega", description: "Multi-modal content understanding", dailyEmission: 285.3, taoInPool: 24.8, alphaInPool: 920, circulatingSupply: 1420, recycleCost: 1.6, totalStake: 1380, validatorCount: 34, uidUtilization: 72, emissionShare: 1.2, priceMomentum: 15.8, emissionTrend: 9.4, netFlow: "positive", age: 7, validatorDiversity: 0.75, githubCommits: 156, githubContributors: 7, testCoverage: 58, securityAudit: true, lastCommit: 2, weeklyActiveMiners: 54, successRate: 94.5 },
+                { id: 32, name: "ITS", description: "Intent-based transaction system", dailyEmission: 245.2, taoInPool: 14.8, alphaInPool: 520, circulatingSupply: 920, recycleCost: 1.3, totalStake: 980, validatorCount: 26, uidUtilization: 62, emissionShare: 0.9, priceMomentum: 45.2, emissionTrend: 22.8, netFlow: "positive", age: 4, validatorDiversity: 0.81, githubCommits: 212, githubContributors: 9, testCoverage: 68, securityAudit: true, lastCommit: 1, weeklyActiveMiners: 38, successRate: 96.4 },
+            ];
+
+            const calculateDerivedMetrics = (subnet) => {
+                const alphaPrice = subnet.taoInPool / subnet.alphaInPool;
+                const marketCap = alphaPrice * subnet.circulatingSupply;
+                const taoLiquidity = subnet.taoInPool * 2;
+                const liquidityMcRatio = (taoLiquidity / marketCap) * 100;
+                return { alphaPrice, marketCap, taoLiquidity, liquidityMcRatio };
+            };
+
+            const calculatePERatio = (subnet) => {
+                const { marketCap } = calculateDerivedMetrics(subnet);
+                const peRatio = marketCap / subnet.dailyEmission;
+                const emissionYield = (subnet.dailyEmission / marketCap) * 100;
+                const fairValueLow = 0.25, fairValueHigh = 0.40;
+                
+                let status, color, icon, description, score;
+                if (peRatio < fairValueLow) {
+                    const intensity = Math.min(100, ((fairValueLow - peRatio) / fairValueLow) * 100);
+                    status = intensity > 50 ? "Highly Undervalued" : "Undervalued";
+                    color = "text-emerald-400"; icon = "undervalued";
+                    description = "Low price relative to emissions - high yield opportunity";
+                    score = Math.min(100, 70 + intensity * 0.3);
+                } else if (peRatio > fairValueHigh) {
+                    const intensity = Math.min(100, ((peRatio - fairValueHigh) / fairValueHigh) * 100);
+                    status = intensity > 50 ? "Highly Speculative" : "Overbought";
+                    color = "text-red-400"; icon = "overbought";
+                    description = "High price relative to emissions - speculative premium";
+                    score = Math.max(20, 50 - intensity * 0.3);
+                } else {
+                    status = "Fair Value"; color = "text-yellow-400"; icon = "fair";
+                    description = "Price aligned with emissions - balanced risk/reward";
+                    score = 60;
+                }
+                return { ratio: peRatio, emissionYield, status, color, icon, description, score: Math.round(score) };
+            };
+
+            const calculateDeAIScore = (subnet) => {
+                const normalize = (v, min, max) => Math.min(100, Math.max(0, ((v - min) / (max - min)) * 100));
+                const derived = calculateDerivedMetrics(subnet);
+                const economic = (normalize(subnet.dailyEmission, 300, 600) * 0.3 + normalize(derived.alphaPrice, 0.02, 0.06) * 0.25 + normalize(derived.marketCap, 50, 200) * 0.25 + normalize(subnet.recycleCost, 1.5, 4.5) * 0.2);
+                const network = (normalize(subnet.totalStake, 1500, 4000) * 0.3 + normalize(subnet.validatorCount, 40, 80) * 0.25 + normalize(subnet.uidUtilization, 75, 100) * 0.25 + normalize(subnet.weeklyActiveMiners, 50, 200) * 0.2);
+                const liquidity = (normalize(derived.taoLiquidity, 70, 180) * 0.4 + normalize(subnet.emissionShare, 1.5, 3.5) * 0.35 + normalize(derived.liquidityMcRatio, 40, 80) * 0.25);
+                const momentum = (normalize(subnet.priceMomentum + 10, 0, 30) * 0.4 + normalize(subnet.emissionTrend, 0, 15) * 0.3 + (subnet.netFlow === "positive" ? 100 : subnet.netFlow === "neutral" ? 50 : 0) * 0.3);
+                const quality = (normalize(subnet.age, 6, 18) * 0.35 + normalize(1 - subnet.validatorDiversity, 0.3, 0.5) * 0.3 + normalize(subnet.successRate, 90, 100) * 0.35);
+                const valuation = calculatePERatio(subnet).score;
+                const total = Math.round(economic * 0.25 + network * 0.25 + liquidity * 0.15 + momentum * 0.10 + quality * 0.10 + valuation * 0.15);
+                return { total, breakdown: { economic: Math.round(economic), network: Math.round(network), liquidity: Math.round(liquidity), momentum: Math.round(momentum), quality: Math.round(quality), valuation: Math.round(valuation) } };
+            };
+
+            const calculateGitHubScore = (s) => Math.round((Math.min(100, (s.githubCommits / 250) * 100) * 0.25 + Math.min(100, (s.githubContributors / 15) * 100) * 0.2 + s.testCoverage * 0.25 + (s.securityAudit ? 100 : 0) * 0.15 + Math.max(0, 100 - s.lastCommit * 12) * 0.15));
+            const calculateCompositeScore = (subnet) => Math.round(calculateDeAIScore(subnet).total * 0.75 + calculateGitHubScore(subnet) * 0.25);
+            const formatValue = (v) => currencyMode === 'usd' ? (v * taoPrice >= 1e6 ? `$${(v * taoPrice / 1e6).toFixed(2)}M` : v * taoPrice >= 1000 ? `$${(v * taoPrice / 1000).toFixed(1)}K` : `$${(v * taoPrice).toFixed(2)}`) : (v >= 1000 ? `${(v / 1000).toFixed(2)}K τ` : `${v.toFixed(4)} τ`);
+            const formatAlphaPrice = (v) => currencyMode === 'usd' ? `$${(v * taoPrice).toFixed(4)}` : `${v.toFixed(6)} τ`;
+            const getScoreColor = (s) => s >= 80 ? 'text-emerald-400' : s >= 65 ? 'text-lime-400' : s >= 50 ? 'text-yellow-400' : s >= 35 ? 'text-orange-400' : 'text-red-400';
+            const getScoreBgColor = (s) => s >= 80 ? 'bg-emerald-500' : s >= 65 ? 'bg-lime-500' : s >= 50 ? 'bg-yellow-500' : s >= 35 ? 'bg-orange-500' : 'bg-red-500';
+            const getScoreGrade = (s) => s >= 85 ? { grade: 'A+', color: 'text-emerald-400' } : s >= 80 ? { grade: 'A', color: 'text-emerald-400' } : s >= 75 ? { grade: 'A-', color: 'text-lime-400' } : s >= 70 ? { grade: 'B+', color: 'text-lime-400' } : s >= 65 ? { grade: 'B', color: 'text-lime-400' } : s >= 60 ? { grade: 'B-', color: 'text-yellow-400' } : s >= 55 ? { grade: 'C+', color: 'text-yellow-400' } : s >= 50 ? { grade: 'C', color: 'text-yellow-400' } : { grade: 'D', color: 'text-orange-400' };
+            const getValuationIcon = (i) => i === 'undervalued' ? <ThumbsUp size={16} className="text-emerald-400" /> : i === 'overbought' ? <AlertTriangle size={16} className="text-red-400" /> : <Scale size={16} className="text-yellow-400" />;
+
+            const sortedSubnets = useMemo(() => {
+                let sorted = [...subnets];
+                if (sortBy === 'compositeScore') sorted.sort((a, b) => calculateCompositeScore(b) - calculateCompositeScore(a));
+                else if (sortBy === 'peRatio') sorted.sort((a, b) => calculatePERatio(a).ratio - calculatePERatio(b).ratio);
+                else if (sortBy === 'emissionYield') sorted.sort((a, b) => calculatePERatio(b).emissionYield - calculatePERatio(a).emissionYield);
+                else if (sortBy === 'marketCap') sorted.sort((a, b) => calculateDerivedMetrics(b).marketCap - calculateDerivedMetrics(a).marketCap);
+                else if (sortBy === 'emission') sorted.sort((a, b) => b.dailyEmission - a.dailyEmission);
+                return sorted.filter(s => calculateDeAIScore(s).total >= filterMinScore);
+            }, [sortBy, filterMinScore]);
+
+            const avgComposite = Math.round(subnets.reduce((a, s) => a + calculateCompositeScore(s), 0) / subnets.length);
+            const avgPE = (subnets.reduce((a, s) => a + calculatePERatio(s).ratio, 0) / subnets.length).toFixed(3);
+            const valuationCounts = subnets.reduce((a, s) => { const pe = calculatePERatio(s); if (pe.icon === 'undervalued') a.undervalued++; else if (pe.icon === 'overbought') a.overbought++; else a.fair++; return a; }, { undervalued: 0, fair: 0, overbought: 0 });
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950 p-4 md:p-8">
+                    <div className="max-w-7xl mx-auto mb-8">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
+                            <div className="space-y-2">
+                                <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent flex items-center gap-3 animate-gradient">
+                                    <Zap className="text-purple-400 animate-pulse" size={40} />DeAI Subnet Dashboard
+                                </h1>
+                                <p className="text-gray-400 text-lg">Bittensor subnet analysis • <span className="text-purple-400 font-semibold">TAO: ${taoPrice.toFixed(2)}</span></p>
+                            </div>
+                            <div className="flex gap-3">
+                                <button onClick={() => setShowMethodology(!showMethodology)} className="px-4 py-2.5 bg-slate-800/80 hover:bg-slate-700 text-white rounded-xl flex items-center gap-2 text-sm font-medium transition-all hover:scale-105 border border-slate-700 hover:border-purple-500/50 shadow-lg">
+                                    <Info size={18} />Methodology
+                                </button>
+                                <button onClick={() => setCurrencyMode(currencyMode === 'usd' ? 'tao' : 'usd')} className="px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white rounded-xl flex items-center gap-2 text-sm font-medium transition-all hover:scale-105 shadow-lg shadow-purple-500/30">
+                                    <DollarSign size={18} />{currencyMode.toUpperCase()}
+                                </button>
+                            </div>
+                        </div>
+                        {showMethodology && (
+                            <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm rounded-2xl p-6 mb-6 border border-purple-500/40 shadow-2xl shadow-purple-500/20 animate-fadeIn">
+                                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><BarChart3 size={24} className="text-purple-400" />Scoring Methodology</h3>
+                                <div className="grid md:grid-cols-3 gap-6">
+                                    <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700"><h4 className="text-purple-400 font-semibold mb-3 text-base">Price & Market Cap</h4><p className="text-gray-300 text-sm leading-relaxed">• Alpha Price = TAO in Pool ÷ Alpha in Pool</p><p className="text-gray-300 text-sm leading-relaxed">• Market Cap = Price × Circulating Supply</p><p className="text-gray-300 text-sm leading-relaxed">• Liquidity = 2 × TAO in Pool</p></div>
+                                    <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700"><h4 className="text-purple-400 font-semibold mb-3 text-base">DeAI Score (75%)</h4><p className="text-gray-300 text-sm leading-relaxed">Economic 25% | Network 25% | Valuation 15% | Liquidity 15% | Momentum 10% | Quality 10%</p></div>
+                                    <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700"><h4 className="text-purple-400 font-semibold mb-3 text-base">P/E Ratio = MCap ÷ Daily Emission</h4><p className="text-emerald-400 text-sm">Undervalued: P/E &lt; 0.25</p><p className="text-yellow-400 text-sm">Fair Value: 0.25-0.40</p><p className="text-red-400 text-sm">Overbought: P/E &gt; 0.40</p></div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
+                        <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur rounded-2xl p-5 border border-purple-500/40 hover:border-purple-400/60 transition-all hover:scale-105 shadow-lg hover:shadow-purple-500/20 group">
+                            <div className="text-gray-400 text-xs mb-2 font-medium uppercase tracking-wider">Subnets</div>
+                            <div className="text-3xl font-bold text-white group-hover:text-purple-400 transition-colors">{subnets.length}</div>
+                        </div>
+                        <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur rounded-2xl p-5 border border-purple-500/40 hover:border-purple-400/60 transition-all hover:scale-105 shadow-lg hover:shadow-purple-500/20 group">
+                            <div className="text-gray-400 text-xs mb-2 font-medium uppercase tracking-wider">Avg Score</div>
+                            <div className={`text-3xl font-bold ${getScoreColor(avgComposite)} transition-colors`}>{avgComposite}</div>
+                        </div>
+                        <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur rounded-2xl p-5 border border-purple-500/40 hover:border-purple-400/60 transition-all hover:scale-105 shadow-lg hover:shadow-purple-500/20 group">
+                            <div className="text-gray-400 text-xs mb-2 font-medium uppercase tracking-wider">Avg P/E</div>
+                            <div className="text-3xl font-bold text-purple-400 group-hover:text-purple-300 transition-colors">{avgPE}</div>
+                        </div>
+                        <div className="bg-gradient-to-br from-emerald-900/30 to-slate-900/80 backdrop-blur rounded-2xl p-5 border border-emerald-500/40 hover:border-emerald-400/60 transition-all hover:scale-105 shadow-lg hover:shadow-emerald-500/20 group">
+                            <div className="text-gray-400 text-xs mb-2 flex items-center gap-1.5 font-medium uppercase tracking-wider"><ThumbsUp size={14} className="text-emerald-400" />Undervalued</div>
+                            <div className="text-3xl font-bold text-emerald-400 group-hover:text-emerald-300 transition-colors">{valuationCounts.undervalued}</div>
+                        </div>
+                        <div className="bg-gradient-to-br from-yellow-900/30 to-slate-900/80 backdrop-blur rounded-2xl p-5 border border-yellow-500/40 hover:border-yellow-400/60 transition-all hover:scale-105 shadow-lg hover:shadow-yellow-500/20 group">
+                            <div className="text-gray-400 text-xs mb-2 flex items-center gap-1.5 font-medium uppercase tracking-wider"><Scale size={14} className="text-yellow-400" />Fair Value</div>
+                            <div className="text-3xl font-bold text-yellow-400 group-hover:text-yellow-300 transition-colors">{valuationCounts.fair}</div>
+                        </div>
+                        <div className="bg-gradient-to-br from-red-900/30 to-slate-900/80 backdrop-blur rounded-2xl p-5 border border-red-500/40 hover:border-red-400/60 transition-all hover:scale-105 shadow-lg hover:shadow-red-500/20 group">
+                            <div className="text-gray-400 text-xs mb-2 flex items-center gap-1.5 font-medium uppercase tracking-wider"><AlertTriangle size={14} className="text-red-400" />Overbought</div>
+                            <div className="text-3xl font-bold text-red-400 group-hover:text-red-300 transition-colors">{valuationCounts.overbought}</div>
+                        </div>
+                    </div>
+
+                    <div className="max-w-7xl mx-auto flex flex-wrap gap-4 mb-8">
+                        <div className="flex items-center gap-3 bg-gradient-to-r from-slate-800/80 to-slate-900/80 backdrop-blur rounded-xl px-5 py-3 border border-purple-500/40 shadow-lg hover:border-purple-400/60 transition-all">
+                            <ArrowUpDown size={18} className="text-purple-400" />
+                            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="bg-transparent text-white text-sm focus:outline-none cursor-pointer font-medium">
+                                <option value="compositeScore" className="bg-slate-800">Composite Score</option>
+                                <option value="peRatio" className="bg-slate-800">P/E Ratio (Low→High)</option>
+                                <option value="emissionYield" className="bg-slate-800">Emission Yield</option>
+                                <option value="marketCap" className="bg-slate-800">Market Cap</option>
+                                <option value="emission" className="bg-slate-800">Daily Emission</option>
+                            </select>
+                        </div>
+                        <div className="flex items-center gap-3 bg-gradient-to-r from-slate-800/80 to-slate-900/80 backdrop-blur rounded-xl px-5 py-3 border border-purple-500/40 shadow-lg hover:border-purple-400/60 transition-all">
+                            <Filter size={18} className="text-purple-400" />
+                            <span className="text-gray-400 text-sm font-medium">Min Score:</span>
+                            <input type="range" min="0" max="80" value={filterMinScore} onChange={(e) => setFilterMinScore(Number(e.target.value))} className="w-24 accent-purple-500 cursor-pointer" />
+                            <span className="text-white text-sm font-bold bg-purple-500/20 px-3 py-1 rounded-lg min-w-[3rem] text-center">{filterMinScore}</span>
+                        </div>
+                    </div>
+
+                    <div className="max-w-7xl mx-auto space-y-4">
+                        {sortedSubnets.map((subnet, index) => {
+                            const deaiScore = calculateDeAIScore(subnet);
+                            const githubScore = calculateGitHubScore(subnet);
+                            const compositeScore = calculateCompositeScore(subnet);
+                            const peData = calculatePERatio(subnet);
+                            const derived = calculateDerivedMetrics(subnet);
+                            const grade = getScoreGrade(compositeScore);
+                            const isExpanded = expandedSubnet === subnet.id;
+
+                            return (
+                                <div key={subnet.id} className="bg-gradient-to-br from-slate-800/70 to-slate-900/70 backdrop-blur rounded-2xl border border-purple-500/40 overflow-hidden hover:border-purple-400/70 hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 group">
+                                    <div className="p-5 md:p-6 cursor-pointer" onClick={() => setExpandedSubnet(isExpanded ? null : subnet.id)}>
+                                        <div className="flex items-start justify-between gap-4">
+                                            <div className="flex-1">
+                                                <div className="flex flex-wrap items-center gap-3 mb-3">
+                                                    <span className="text-gray-500 text-sm font-mono bg-slate-700/50 px-2.5 py-1 rounded-lg">#{index + 1}</span>
+                                                    <h2 className="text-2xl font-bold bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">SN{subnet.id}: {subnet.name}</h2>
+                                                    <span className={`text-3xl font-bold ${grade.color} drop-shadow-lg`}>{grade.grade}</span>
+                                                    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-lg ${peData.icon === 'undervalued' ? 'bg-gradient-to-r from-emerald-500/30 to-emerald-600/30 text-emerald-300 border border-emerald-400/50' : peData.icon === 'overbought' ? 'bg-gradient-to-r from-red-500/30 to-red-600/30 text-red-300 border border-red-400/50' : 'bg-gradient-to-r from-yellow-500/30 to-yellow-600/30 text-yellow-300 border border-yellow-400/50'}`}>
+                                                        {getValuationIcon(peData.icon)}{peData.status}
+                                                    </div>
+                                                </div>
+                                                <p className="text-gray-400 text-sm mb-4 leading-relaxed">{subnet.description}</p>
+                                                <div className="grid grid-cols-2 md:grid-cols-6 gap-4 text-sm">
+                                                    <div className="bg-slate-700/30 rounded-lg p-2.5 border border-slate-600/50"><div className="text-gray-400 text-xs mb-1 font-medium">Alpha Price</div><div className="text-white font-bold">{formatAlphaPrice(derived.alphaPrice)}</div></div>
+                                                    <div className="bg-slate-700/30 rounded-lg p-2.5 border border-slate-600/50"><div className="text-gray-400 text-xs mb-1 font-medium">Market Cap</div><div className="text-white font-bold">{formatValue(derived.marketCap)}</div></div>
+                                                    <div className="bg-slate-700/30 rounded-lg p-2.5 border border-slate-600/50"><div className="text-gray-400 text-xs mb-1 font-medium">P/E Ratio</div><div className={`font-bold ${peData.color}`}>{peData.ratio.toFixed(3)}</div></div>
+                                                    <div className="bg-slate-700/30 rounded-lg p-2.5 border border-slate-600/50"><div className="text-gray-400 text-xs mb-1 font-medium">Emission Yield</div><div className="text-blue-400 font-bold">{peData.emissionYield.toFixed(1)}%</div></div>
+                                                    <div className="bg-slate-700/30 rounded-lg p-2.5 border border-slate-600/50"><div className="text-gray-400 text-xs mb-1 font-medium">Daily Emission</div><div className="text-white font-bold">{formatValue(subnet.dailyEmission)}</div></div>
+                                                    <div className="bg-slate-700/30 rounded-lg p-2.5 border border-slate-600/50"><div className="text-gray-400 text-xs mb-1 font-medium">Momentum</div><div className={`font-bold flex items-center gap-1 ${subnet.priceMomentum >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{subnet.priceMomentum >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}{subnet.priceMomentum > 0 ? '+' : ''}{subnet.priceMomentum}%</div></div>
+                                                </div>
+                                            </div>
+                                            <div className="transition-transform group-hover:scale-110">{isExpanded ? <ChevronUp size={24} className="text-purple-400" /> : <ChevronDown size={24} className="text-purple-400" />}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<DeAISubnetDashboard />, document.getElementById('root'));
+    </script>
+</body>
+</html>
