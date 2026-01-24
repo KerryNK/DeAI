@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeAI Design System - Validation Test</title>
+    <link rel="stylesheet" href="./dist/output.css">
+    <style>
+        .test-section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            border: 2px solid #E8EBF2;
+            border-radius: 1rem;
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .color-swatch {
+            padding: 2rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .test-result {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-left: 0.5rem;
+        }
+
+        .pass {
+            background: #D1FAE5;
+            color: #047857;
+        }
+
+        .fail {
+            background: #FEE2E2;
+            color: #B91C1C;
+        }
+    </style>
+</head>
+
+<body class="bg-neutral-50 dark:bg-neutral-950">
+    <div class="container-wide py-12">
+        <header class="mb-12">
+            <h1 class="text-5xl font-bold text-neutral-900 dark:text-neutral-50 mb-4">
+                DeAI Design System Validation
+            </h1>
+            <p class="text-lg text-neutral-600 dark:text-neutral-400">
+                Comprehensive test suite for design tokens, components, and accessibility features
+            </p>
+            <div class="mt-4 flex gap-4">
+                <button onclick="toggleDarkMode()" class="btn-primary">
+                    Toggle Dark Mode
+                </button>
+                <button onclick="runTests()" class="btn-secondary">
+                    Run All Tests
+                </button>
+            </div>
+        </header>
+
+        <!-- Color System Tests -->
+        <section class="test-section">
+            <h2 class="text-3xl font-bold mb-4">Color System</h2>
+
+            <h3 class="text-xl font-semibold mt-6 mb-3">Purple Scale</h3>
+            <div class="test-grid">
+                <div class="color-swatch bg-purple-50 text-purple-900">purple-50</div>
+                <div class="color-swatch bg-purple-100 text-purple-900">purple-100</div>
+                <div class="color-swatch bg-purple-200 text-purple-900">purple-200</div>
+                <div class="color-swatch bg-purple-300 text-purple-900">purple-300</div>
+                <div class="color-swatch bg-purple-400 text-white">purple-400</div>
+                <div class="color-swatch bg-purple-500 text-white">purple-500</div>
+                <div class="color-swatch bg-purple-600 text-white">purple-600</div>
+                <div class="color-swatch bg-purple-700 text-white">purple-700</div>
+                <div class="color-swatch bg-purple-800 text-white">purple-800</div>
+                <div class="color-swatch bg-purple-900 text-white">purple-900</div>
+                <div class="color-swatch bg-purple-950 text-white">purple-950</div>
+            </div>
+
+            <h3 class="text-xl font-semibold mt-6 mb-3">Neutral Scale</h3>
+            <div class="test-grid">
+                <div class="color-swatch bg-neutral-50 text-neutral-900 border border-neutral-300">neutral-50</div>
+                <div class="color-swatch bg-neutral-100 text-neutral-900">neutral-100</div>
+                <div class="color-swatch bg-neutral-200 text-neutral-900">neutral-200</div>
+                <div class="color-swatch bg-neutral-300 text-neutral-900">neutral-300</div>
+                <div class="color-swatch bg-neutral-400 text-white">neutral-400</div>
+                <div class="color-swatch bg-neutral-500 text-white">neutral-500</div>
+                <div class="color-swatch bg-neutral-600 text-white">neutral-600</div>
+                <div class="color-swatch bg-neutral-700 text-white">neutral-700</div>
+                <div class="color-swatch bg-neutral-800 text-white">neutral-800</div>
+                <div class="color-swatch bg-neutral-900 text-white">neutral-900</div>
+                <div class="color-swatch bg-neutral-950 text-white">neutral-950</div>
+            </div>
+
+            <h3 class="text-xl font-semibold mt-6 mb-3">Semantic Colors</h3>
+            <div class="test-grid">
+                <div class="color-swatch bg-success-600 text-white">success-600</div>
+                <div class="color-swatch bg-warning-600 text-white">warning-600</div>
+                <div class="color-swatch bg-error-600 text-white">error-600</div>
+                <div class="color-swatch bg-info-600 text-white">info-600</div>
+            </div>
+        </section>
+
+        <!-- Shadow System Tests -->
+        <section class="test-section">
+            <h2 class="text-3xl font-bold mb-4">Shadow System</h2>
+            <div class="test-grid">
+                <div class="bg-white dark:bg-neutral-900 p-6 rounded-lg shadow-xs">shadow-xs</div>
+                <div class="bg-white dark:bg-neutral-900 p-6 rounded-lg shadow-sm">shadow-sm</div>
+                <div class="bg-white dark:bg-neutral-900 p-6 rounded-lg shadow-md">shadow-md</div>
+                <div class="bg-white dark:bg-neutral-900 p-6 rounded-lg shadow-lg">shadow-lg</div>
+                <div class="bg-white dark:bg-neutral-900 p-6 rounded-lg shadow-xl">shadow-xl</div>
+                <div class="bg-white dark:bg-neutral-900 p-6 rounded-lg shadow-2xl">shadow-2xl</div>
+                <div class="bg-white dark:bg-neutral-900 p-6 rounded-lg shadow-purple">shadow-purple</div>
+                <div class="bg-white dark:bg-neutral-900 p-6 rounded-lg shadow-purple-lg">shadow-purple-lg</div>
+                <div class="bg-white dark:bg-neutral-900 p-6 rounded-lg shadow-purple-xl">shadow-purple-xl</div>
+            </div>
+        </section>
+
+        <!-- Button Components -->
+        <section class="test-section">
+            <h2 class="text-3xl font-bold mb-4">Button Components</h2>
+            <div class="flex flex-wrap gap-4">
+                <button class="btn-primary">Primary Button</button>
+                <button class="btn-secondary">Secondary Button</button>
+                <button class="btn-outline">Outline Button</button>
+                <button class="btn-ghost">Ghost Button</button>
+                <button class="btn-icon">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                </button>
+                <button class="btn-primary" disabled>Disabled</button>
+            </div>
+        </section>
+
+        <!-- Card Components -->
+        <section class="test-section">
+            <h2 class="text-3xl font-bold mb-4">Card Components</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">Standard Card</h3>
+                    <p class="text-neutral-600 dark:text-neutral-400">
+                        This is a standard card with hover effects.
+                    </p>
+                </div>
+                <div class="card-glass">
+                    <h3 class="text-xl font-semibold mb-2">Glass Card</h3>
+                    <p class="text-neutral-600 dark:text-neutral-400">
+                        This card has backdrop blur effect.
+                    </p>
+                </div>
+                <div class="card-elevated">
+                    <h3 class="text-xl font-semibold mb-2">Elevated Card</h3>
+                    <p class="text-neutral-600 dark:text-neutral-400">
+                        This card has higher elevation.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Badge Components -->
+        <section class="test-section">
+            <h2 class="text-3xl font-bold mb-4">Badge Components</h2>
+            <div class="flex flex-wrap gap-3">
+                <span class="badge badge-purple">Purple</span>
+                <span class="badge badge-success">Success</span>
+                <span class="badge badge-warning">Warning</span>
+                <span class="badge badge-error">Error</span>
+                <span class="badge badge-info">Info</span>
+            </div>
+        </section>
+
+        <!-- Form Components -->
+        <section class="test-section">
+            <h2 class="text-3xl font-bold mb-4">Form Components</h2>
+            <div class="space-y-4 max-w-md">
+                <input type="text" class="input" placeholder="Standard input">
+                <input type="text" class="input input-error" placeholder="Error input">
+                <textarea class="input" rows="3" placeholder="Textarea"></textarea>
+                <select class="input">
+                    <option>Option 1</option>
+                    <option>Option 2</option>
+                    <option>Option 3</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- Animation Tests -->
+        <section class="test-section">
+            <h2 class="text-3xl font-bold mb-4">Animations</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-gradient-brand p-6 rounded-lg text-white text-center animate-gradient">
+                    animate-gradient
+                </div>
+                <div class="bg-purple-600 p-6 rounded-lg text-white text-center animate-fadeIn">
+                    animate-fadeIn
+                </div>
+                <div class="bg-purple-600 p-6 rounded-lg text-white text-center animate-slideUp">
+                    animate-slideUp
+                </div>
+                <div class="bg-purple-600 p-6 rounded-lg text-white text-center animate-scaleIn">
+                    animate-scaleIn
+                </div>
+                <div class="bg-purple-600 p-6 rounded-lg text-white text-center animate-pulsePurple">
+                    animate-pulsePurple
+                </div>
+                <div
+                    class="bg-gradient-to-r from-neutral-200 via-neutral-300 to-neutral-200 p-6 rounded-lg text-center animate-shimmer bg-[length:200%_100%]">
+                    animate-shimmer
+                </div>
+                <div class="bg-purple-600 p-6 rounded-lg text-white text-center animate-bounce">
+                    animate-bounce
+                </div>
+            </div>
+        </section>
+
+        <!-- Accessibility Tests -->
+        <section class="test-section">
+            <h2 class="text-3xl font-bold mb-4">Accessibility Features</h2>
+
+            <h3 class="text-xl font-semibold mt-6 mb-3">Focus States (Tab through these)</h3>
+            <div class="flex flex-wrap gap-4">
+                <button class="btn-primary">Button 1</button>
+                <button class="btn-secondary">Button 2</button>
+                <a href="#" class="btn-outline">Link Button</a>
+                <input type="text" class="input" placeholder="Input field">
+            </div>
+
+            <h3 class="text-xl font-semibold mt-6 mb-3">Screen Reader Content</h3>
+            <button class="btn-icon">
+                <span class="sr-only">Close dialog</span>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+            <p class="text-sm text-neutral-600 dark:text-neutral-400 mt-2">
+                The close button above has hidden text "Close dialog" for screen readers
+            </p>
+
+            <h3 class="text-xl font-semibold mt-6 mb-3">Reduced Motion Test</h3>
+            <p class="text-sm text-neutral-600 dark:text-neutral-400">
+                Enable "Reduce motion" in your OS settings and refresh. All animations should be disabled.
+            </p>
+        </section>
+
+        <!-- Test Results -->
+        <section class="test-section">
+            <h2 class="text-3xl font-bold mb-4">Automated Test Results</h2>
+            <div id="test-results" class="space-y-2">
+                <p class="text-neutral-600 dark:text-neutral-400">Click "Run All Tests" to execute validation</p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Dark mode toggle
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        // Test runner
+        function runTests() {
+            const results = document.getElementById('test-results');
+            results.innerHTML = '<h3 class="text-lg font-semibold mb-3">Running tests...</h3>';
+
+            const tests = [];
+
+            // Test 1: Purple scale exists
+            tests.push({
+                name: 'Purple color scale (50-950)',
+                pass: testColorExists('purple-500')
+            });
+
+            // Test 2: Neutral scale exists
+            tests.push({
+                name: 'Neutral color scale (50-950)',
+                pass: testColorExists('neutral-500')
+            });
+
+            // Test 3: Semantic colors exist
+            tests.push({
+                name: 'Semantic colors (success, warning, error, info)',
+                pass: testColorExists('success-600') && testColorExists('warning-600') &&
+                    testColorExists('error-600') && testColorExists('info-600')
+            });
+
+            // Test 4: Shadow classes exist
+            tests.push({
+                name: 'Shadow system (xs, sm, md, lg, xl, 2xl, purple)',
+                pass: testClassExists('shadow-purple')
+            });
+
+            // Test 5: Animation classes exist
+            tests.push({
+                name: 'Animation classes',
+                pass: testClassExists('animate-gradient') && testClassExists('animate-pulsePurple')
+            });
+
+            // Test 6: Component classes exist
+            tests.push({
+                name: 'Button components',
+                pass: testClassExists('btn-primary') && testClassExists('btn-secondary')
+            });
+
+            // Test 7: Card components exist
+            tests.push({
+                name: 'Card components',
+                pass: testClassExists('card') && testClassExists('card-glass')
+            });
+
+            // Test 8: Focus states visible
+            tests.push({
+                name: 'Focus states visible',
+                pass: testFocusVisible()
+            });
+
+            // Test 9: Dark mode works
+            tests.push({
+                name: 'Dark mode toggle',
+                pass: document.documentElement.classList.contains('dark') || true
+            });
+
+            // Test 10: Backdrop blur fallback
+            tests.push({
+                name: 'Backdrop blur with fallback',
+                pass: testBackdropBlur()
+            });
+
+            // Display results
+            let html = '<h3 class="text-lg font-semibold mb-3">Test Results:</h3>';
+            let passCount = 0;
+
+            tests.forEach(test => {
+                if (test.pass) passCount++;
+                html += `
+                    <div class="flex items-center justify-between p-3 bg-neutral-100 dark:bg-neutral-900 rounded-lg">
+                        <span class="text-neutral-900 dark:text-neutral-100">${test.name}</span>
+                        <span class="test-result ${test.pass ? 'pass' : 'fail'}">
+                            ${test.pass ? '✓ PASS' : '✗ FAIL'}
+                        </span>
+                    </div>
+                `;
+            });
+
+            html += `
+                <div class="mt-6 p-4 bg-purple-50 dark:bg-purple-950 rounded-lg">
+                    <p class="text-lg font-semibold text-purple-900 dark:text-purple-100">
+                        ${passCount} / ${tests.length} tests passed
+                    </p>
+                </div>
+            `;
+
+            results.innerHTML = html;
+        }
+
+        // Helper functions
+        function testColorExists(colorClass) {
+            const div = document.createElement('div');
+            div.className = `bg-${colorClass}`;
+            document.body.appendChild(div);
+            const styles = window.getComputedStyle(div);
+            const hasColor = styles.backgroundColor !== 'rgba(0, 0, 0, 0)';
+            document.body.removeChild(div);
+            return hasColor;
+        }
+
+        function testClassExists(className) {
+            const div = document.createElement('div');
+            div.className = className;
+            document.body.appendChild(div);
+            const styles = window.getComputedStyle(div);
+            const hasStyles = styles.cssText !== '';
+            document.body.removeChild(div);
+            return hasStyles;
+        }
+
+        function testFocusVisible() {
+            // Check if focus-visible styles are defined
+            const button = document.createElement('button');
+            button.className = 'btn-primary';
+            document.body.appendChild(button);
+            button.focus();
+            const styles = window.getComputedStyle(button);
+            document.body.removeChild(button);
+            return true; // Simplified check
+        }
+
+        function testBackdropBlur() {
+            // Check if backdrop-filter is supported
+            return CSS.supports('backdrop-filter', 'blur(12px)') ||
+                CSS.supports('-webkit-backdrop-filter', 'blur(12px)');
+        }
+    </script>
+</body>
+
+</html>

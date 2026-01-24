@@ -1,22 +1,383 @@
+/**
+ * DeAI Design System - Base Styles
+ * 
+ * This file contains only Tailwind directives and custom component classes.
+ * All design tokens are defined in tailwind.config.js.
+ * 
+ * Structure:
+ * 1. Tailwind base, components, utilities layers
+ * 2. Global base styles
+ * 3. Accessibility features
+ * 4. Custom component classes
+ */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@keyframes gradient {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+/* ========================================
+   BASE LAYER - Global Styles
+   ======================================== */
+@layer base {
+
+  /* Root element - smooth scrolling */
+  html {
+    @apply scroll-smooth;
+  }
+
+  /* Body - default text and background */
+  body {
+    @apply bg-neutral-50 text-neutral-600 antialiased;
+    @apply dark:bg-neutral-950 dark:text-neutral-300;
+  }
+
+  /* Headings - consistent hierarchy */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold text-neutral-900 dark:text-neutral-50;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl;
+  }
+
+  h4 {
+    @apply text-xl md:text-2xl;
+  }
+
+  h5 {
+    @apply text-lg md:text-xl;
+  }
+
+  h6 {
+    @apply text-base md:text-lg;
+  }
+
+  /* Links - accessible and interactive */
+  a {
+    @apply text-purple-600 hover:text-purple-700 transition-colors duration-200;
+    @apply dark:text-purple-400 dark:hover:text-purple-300;
+  }
+
+  /* Focus styles for keyboard navigation (WCAG 2.1) */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    @apply outline-none ring-2 ring-purple-500 ring-offset-2 ring-offset-neutral-50;
+    @apply dark:ring-purple-400 dark:ring-offset-neutral-950;
+  }
+
+  /* Remove default button styles */
+  button {
+    @apply cursor-pointer;
+  }
+
+  /* Form elements - consistent styling */
+  input,
+  textarea,
+  select {
+    @apply bg-white border border-neutral-300 rounded-lg px-4 py-2;
+    @apply text-neutral-900 placeholder-neutral-400;
+    @apply transition-all duration-200;
+    @apply hover:border-neutral-400;
+    @apply focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20;
+    @apply dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-100;
+    @apply dark:placeholder-neutral-500 dark:hover:border-neutral-600;
+    @apply dark:focus:border-purple-400 dark:focus:ring-purple-400/20;
+  }
+
+  /* Disabled state for form elements */
+  input:disabled,
+  textarea:disabled,
+  select:disabled,
+  button:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
 }
 
-.animate-gradient {
-  background-size: 200% 200%;
-  animation: gradient 3s ease infinite;
+/* ========================================
+   ACCESSIBILITY FEATURES
+   ======================================== */
+
+/* Reduced motion for users who prefer it (WCAG 2.1) */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+/* High contrast mode support (Windows) */
+@media (prefers-contrast: high) {
+  * {
+    border-width: 2px !important;
+  }
+
+  button,
+  a {
+    text-decoration: underline;
+  }
 }
 
-.animate-fadeIn {
-  animation: fadeIn 0.3s ease-out;
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
+
+/* Skip to main content link for keyboard users */
+.skip-to-main {
+  @apply absolute left-0 top-0 -translate-y-full;
+  @apply bg-purple-600 text-white px-4 py-2 rounded-br-lg;
+  @apply focus:translate-y-0 z-100;
+  @apply transition-transform duration-200;
+}
+
+/* ========================================
+   COMPONENTS LAYER - Reusable Components
+   ======================================== */
+@layer components {
+  /* ===== BUTTONS ===== */
+
+  /* Primary button - main CTAs */
+  .btn-primary {
+    @apply bg-purple-600 text-white px-6 py-3 rounded-xl font-semibold;
+    @apply shadow-purple transition-all duration-200;
+    @apply hover:bg-purple-700 hover:shadow-purple-lg hover:-translate-y-0.5;
+    @apply active:bg-purple-800 active:translate-y-0;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0;
+  }
+
+  /* Secondary button - alternative actions */
+  .btn-secondary {
+    @apply bg-neutral-100 text-neutral-900 px-6 py-3 rounded-xl font-semibold;
+    @apply border border-purple-200 transition-all duration-200;
+    @apply hover:bg-neutral-200 hover:border-purple-300;
+    @apply dark:bg-neutral-800 dark:text-neutral-100 dark:border-purple-900;
+    @apply dark:hover:bg-neutral-700 dark:hover:border-purple-800;
+  }
+
+  /* Outline button - tertiary actions */
+  .btn-outline {
+    @apply bg-transparent text-purple-600 px-6 py-3 rounded-xl font-semibold;
+    @apply border-2 border-purple-600 transition-all duration-200;
+    @apply hover:bg-purple-50 hover:border-purple-700;
+    @apply dark:text-purple-400 dark:border-purple-400;
+    @apply dark:hover:bg-purple-950 dark:hover:border-purple-300;
+  }
+
+  /* Ghost button - minimal style */
+  .btn-ghost {
+    @apply bg-transparent text-neutral-700 px-6 py-3 rounded-xl font-semibold;
+    @apply transition-all duration-200;
+    @apply hover:bg-neutral-100;
+    @apply dark:text-neutral-300 dark:hover:bg-neutral-800;
+  }
+
+  /* Icon button - square buttons for icons */
+  .btn-icon {
+    @apply p-2 rounded-lg transition-all duration-200;
+    @apply hover:bg-neutral-100 dark:hover:bg-neutral-800;
+  }
+
+  /* ===== CARDS ===== */
+
+  /* Standard card */
+  .card {
+    @apply bg-white border border-neutral-200 rounded-2xl p-6;
+    @apply shadow-sm transition-all duration-300;
+    @apply hover:bg-neutral-50 hover:border-purple-200 hover:shadow-purple hover:-translate-y-1;
+    @apply dark:bg-neutral-900 dark:border-neutral-800;
+    @apply dark:hover:bg-neutral-800 dark:hover:border-purple-900;
+  }
+
+  /* Glass card - with backdrop blur */
+  .card-glass {
+    @apply bg-white/80 backdrop-blur-md border border-purple-200 rounded-2xl p-6;
+    @apply shadow-lg;
+    @apply dark:bg-neutral-900/80 dark:border-purple-900;
+  }
+
+  /* Elevated card - higher shadow */
+  .card-elevated {
+    @apply bg-white border border-neutral-200 rounded-2xl p-6;
+    @apply shadow-lg transition-all duration-300;
+    @apply hover:shadow-xl hover:-translate-y-1;
+    @apply dark:bg-neutral-900 dark:border-neutral-800;
+  }
+
+  /* ===== BADGES ===== */
+
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+  }
+
+  .badge-purple {
+    @apply bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300;
+  }
+
+  .badge-success {
+    @apply bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300;
+  }
+
+  .badge-warning {
+    @apply bg-warning-100 text-warning-700 dark:bg-warning-900 dark:text-warning-300;
+  }
+
+  .badge-error {
+    @apply bg-error-100 text-error-700 dark:bg-error-900 dark:text-error-300;
+  }
+
+  .badge-info {
+    @apply bg-info-100 text-info-700 dark:bg-info-900 dark:text-info-300;
+  }
+
+  /* ===== INPUTS ===== */
+
+  .input {
+    @apply w-full bg-white border border-neutral-300 rounded-lg px-4 py-2;
+    @apply text-neutral-900 placeholder-neutral-400;
+    @apply transition-all duration-200;
+    @apply hover:border-neutral-400;
+    @apply focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20;
+    @apply dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-100;
+    @apply dark:placeholder-neutral-500 dark:hover:border-neutral-600;
+    @apply dark:focus:border-purple-400 dark:focus:ring-purple-400/20;
+  }
+
+  .input-error {
+    @apply border-error-500 focus:border-error-500 focus:ring-error-500/20;
+  }
+
+  /* ===== CONTAINERS ===== */
+
+  .container-narrow {
+    @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .container-wide {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
+
+/* ========================================
+   UTILITIES LAYER - Custom Utilities
+   ======================================== */
+@layer utilities {
+
+  /* Text gradient utilities */
+  .text-gradient {
+    @apply bg-gradient-brand bg-clip-text text-transparent;
+  }
+
+  .text-gradient-purple {
+    @apply bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent;
+  }
+
+  /* Glass morphism effect */
+  .glass {
+    @apply bg-white/80 backdrop-blur-md;
+    @apply dark:bg-neutral-900/80;
+  }
+
+  /* Supports backdrop-filter with fallback */
+  @supports not (backdrop-filter: blur(12px)) {
+
+    .glass,
+    .card-glass {
+      @apply bg-white dark:bg-neutral-900;
+    }
+  }
+
+  /* Gradient background with animation */
+  .bg-gradient-animated {
+    @apply bg-gradient-brand animate-gradient;
+    background-size: 200% 200%;
+  }
+
+  /* Smooth transitions */
+  .transition-smooth {
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Custom scrollbar */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.purple.400') theme('colors.neutral.200');
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    @apply bg-neutral-200 dark:bg-neutral-800;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply bg-purple-400 rounded-full;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    @apply bg-purple-500;
+  }
+}
+
+/* ========================================
+   BROWSER COMPATIBILITY NOTES
+   ======================================== */
+
+/*
+ * backdrop-filter (blur):
+ * - Chrome/Edge: 76+ ✓
+ * - Firefox: 103+ ✓
+ * - Safari: 9+ ✓
+ * - Fallback: Solid background provided via @supports
+ * 
+ * CSS Grid:
+ * - All modern browsers ✓
+ * 
+ * Custom Properties (CSS Variables):
+ * - All modern browsers ✓
+ * - IE11: Not supported (acceptable for modern apps)
+ * 
+ * :focus-visible:
+ * - Chrome/Edge: 86+ ✓
+ * - Firefox: 85+ ✓
+ * - Safari: 15.4+ ✓
+ * 
+ * prefers-reduced-motion:
+ * - All modern browsers ✓
+ * 
+ * prefers-contrast:
+ * - Chrome/Edge: 96+ ✓
+ * - Firefox: 101+ ✓
+ * - Safari: 14.1+ ✓
+ */
