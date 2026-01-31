@@ -1,8 +1,10 @@
 import React, { useState, useMemo } from 'react';
-import { ChevronDown, ChevronUp, DollarSign, Code, Shield, Activity, TrendingUp, TrendingDown, Filter, ArrowUpDown, Info, Zap, Users, BarChart3, Gauge, AlertTriangle, ThumbsUp, Scale } from 'lucide-react';
+import { ChevronDown, ChevronUp, DollarSign, Code, Shield, Activity, TrendingUp, TrendingDown, Filter, ArrowUpDown, Info, Zap, Users, BarChart3, Gauge, AlertTriangle, ThumbsUp, Scale, Target } from 'lucide-react';
+import EnhancedSubnetView from './EnhancedSubnetView';
 
 const DeAISubnetDashboard = () => {
   const [expandedSubnet, setExpandedSubnet] = useState(null);
+  const [selectedSubnetForAnalysis, setSelectedSubnetForAnalysis] = useState(null);
   const [currencyMode, setCurrencyMode] = useState('usd');
   const [sortBy, setSortBy] = useState('compositeScore');
   const [filterMinScore, setFilterMinScore] = useState(0);
@@ -71,7 +73,7 @@ const DeAISubnetDashboard = () => {
     const peRatio = marketCap / subnet.dailyEmission;
     const emissionYield = (subnet.dailyEmission / marketCap) * 100;
     const fairValueLow = 0.25, fairValueHigh = 0.40;
-    
+
     let status, color, icon, description, score;
     if (peRatio < fairValueLow) {
       const intensity = Math.min(100, ((fairValueLow - peRatio) / fairValueLow) * 100);
@@ -318,6 +320,20 @@ const DeAISubnetDashboard = () => {
                       </div>
                     </div>
                   </div>
+
+                  {/* Enhanced Analysis Button */}
+                  <div className="mt-6 pt-6 border-t border-purple-500/30">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedSubnetForAnalysis(subnet);
+                      }}
+                      className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white rounded-xl font-semibold transition-all hover:scale-105 shadow-lg shadow-purple-500/30 flex items-center justify-center gap-2"
+                    >
+                      <Target size={20} />
+                      View Detailed Analysis (SHS, NFMI, CVS, Recommendations)
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -328,9 +344,17 @@ const DeAISubnetDashboard = () => {
       <div className="max-w-7xl mx-auto mt-8 text-center text-gray-500 text-sm">
         <p>Price = TAO in Pool ÷ Alpha in Pool • Market Cap = Price × Circulating Supply • P/E = Market Cap ÷ Daily Emission</p>
       </div>
+
+      {/* Enhanced Subnet Analysis Modal */}
+      {selectedSubnetForAnalysis && (
+        <EnhancedSubnetView
+          subnet={selectedSubnetForAnalysis}
+          taoPrice={taoPrice}
+          onClose={() => setSelectedSubnetForAnalysis(null)}
+        />
+      )}
     </div>
   );
 };
 
 export default DeAISubnetDashboard;
-
