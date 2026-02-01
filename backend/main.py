@@ -31,13 +31,18 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Enable CORS for local development
+# Enable CORS for local development and production
 origins = [
     "http://localhost:5173",  # Vite dev server
     "http://localhost:3000",
     "http://localhost:8000",
     "http://127.0.0.1:5173",
+    "http://127.0.0.1:3000",
 ]
+
+# Add production URLs from environment variables
+if frontend_url := os.getenv("FRONTEND_URL"):
+    origins.append(frontend_url)
 
 app.add_middleware(
     CORSMiddleware,
