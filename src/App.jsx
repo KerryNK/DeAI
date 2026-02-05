@@ -1,7 +1,8 @@
-import DeAISubnetDashboard from './components/DeAISubnetDashboard'
+import DeAINexusTerminal from './components/DeAINexusTerminal'
 
 function App() {
-    return <DeAISubnetDashboard />
+    return <DeAINexusTerminal />
 }
 
 export default App
+
