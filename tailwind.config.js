@@ -39,23 +39,23 @@ export default {
                 // Used for primary branding elements, CTAs, and key UI components
                 brand: {
                     black: '#0A0A0F',      // Primary brand color - deep black
-                    purple: '#8B5CF6',     // Primary accent - vibrant purple
+                    gray: '#6B6B7F',       // Primary accent - medium gray
                 },
 
-                // Purple Scale
-                // Full purple palette for various UI states and emphasis levels
-                purple: {
-                    50: '#FAF5FF',         // Lightest - backgrounds, hover states
-                    100: '#F3E8FF',        // Very light - subtle backgrounds
-                    200: '#E9D5FF',        // Light - borders, disabled states
-                    300: '#D8B4FE',        // Medium light - secondary elements
-                    400: '#C084FC',        // Medium - interactive elements
-                    500: '#A855F7',        // Base purple - primary actions
-                    600: '#9333EA',        // Medium dark - hover states
-                    700: '#7E22CE',        // Dark - active states
-                    800: '#6B21A8',        // Darker - emphasis
-                    900: '#581C87',        // Darkest - high contrast
-                    950: '#3B0764',        // Ultra dark - maximum contrast
+                // Gray Scale (formerly Purple)
+                // Full grayscale palette for various UI states and emphasis levels
+                gray: {
+                    50: '#FAFAFA',         // Lightest - backgrounds, hover states
+                    100: '#F5F5F5',        // Very light - subtle backgrounds
+                    200: '#E5E5E5',        // Light - borders, disabled states
+                    300: '#D4D4D4',        // Medium light - secondary elements
+                    400: '#A3A3A3',        // Medium - interactive elements
+                    500: '#737373',        // Base gray - primary actions
+                    600: '#525252',        // Medium dark - hover states
+                    700: '#404040',        // Dark - active states
+                    800: '#262626',        // Darker - emphasis
+                    900: '#171717',        // Darkest - high contrast
+                    950: '#0A0A0A',        // Ultra dark - maximum contrast
                 },
 
                 // Neutral Scale (Light Mode)
@@ -74,42 +74,42 @@ export default {
                     950: '#0A0A0F',        // Brand black
                 },
 
-                // Semantic Colors
+                // Semantic Colors (Grayscale)
                 // Status and feedback colors with WCAG AA compliant contrast
                 success: {
-                    50: '#ECFDF5',
-                    100: '#D1FAE5',
-                    500: '#10B981',        // Primary success - WCAG AA on white
-                    600: '#059669',        // Darker success - better contrast
-                    700: '#047857',
-                    900: '#064E3B',
+                    50: '#F5F5F5',
+                    100: '#E5E5E5',
+                    500: '#525252',        // Primary success - WCAG AA on white
+                    600: '#404040',        // Darker success - better contrast
+                    700: '#262626',
+                    900: '#0A0A0A',
                 },
 
                 warning: {
-                    50: '#FFFBEB',
-                    100: '#FEF3C7',
-                    500: '#F59E0B',        // Primary warning
-                    600: '#D97706',        // Darker warning - better contrast
-                    700: '#B45309',
-                    900: '#78350F',
+                    50: '#FAFAFA',
+                    100: '#F5F5F5',
+                    500: '#737373',        // Primary warning
+                    600: '#525252',        // Darker warning - better contrast
+                    700: '#404040',
+                    900: '#171717',
                 },
 
                 error: {
-                    50: '#FEF2F2',
-                    100: '#FEE2E2',
-                    500: '#EF4444',        // Primary error
-                    600: '#DC2626',        // Darker error - better contrast
-                    700: '#B91C1C',
-                    900: '#7F1D1D',
+                    50: '#F5F5F5',
+                    100: '#E5E5E5',
+                    500: '#404040',        // Primary error
+                    600: '#262626',        // Darker error - better contrast
+                    700: '#171717',
+                    900: '#0A0A0A',
                 },
 
                 info: {
-                    50: '#EFF6FF',
-                    100: '#DBEAFE',
-                    500: '#3B82F6',        // Primary info
-                    600: '#2563EB',        // Darker info - better contrast
-                    700: '#1D4ED8',
-                    900: '#1E3A8A',
+                    50: '#FAFAFA',
+                    100: '#F5F5F5',
+                    500: '#A3A3A3',        // Primary info
+                    600: '#737373',        // Darker info - better contrast
+                    700: '#525252',
+                    900: '#171717',
                 },
             },
 
@@ -163,11 +163,6 @@ export default {
                 'xl': '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
                 '2xl': '0 25px 50px -12px rgb(0 0 0 / 0.25)',
 
-                // Purple-themed shadows for brand elements
-                'purple': '0 10px 25px -5px rgb(139 92 246 / 0.2), 0 4px 6px -2px rgb(139 92 246 / 0.05)',
-                'purple-lg': '0 20px 40px -10px rgb(139 92 246 / 0.3), 0 8px 12px -4px rgb(139 92 246 / 0.1)',
-                'purple-xl': '0 30px 60px -15px rgb(139 92 246 / 0.4), 0 12px 20px -6px rgb(139 92 246 / 0.15)',
-
                 // Inner shadows for depth
                 'inner': 'inset 0 2px 4px 0 rgb(0 0 0 / 0.05)',
                 'inner-lg': 'inset 0 4px 8px 0 rgb(0 0 0 / 0.1)',
@@ -193,21 +188,21 @@ export default {
             // GRADIENTS
             // ========================================
             backgroundImage: {
-                // Brand gradients
-                'gradient-brand': 'linear-gradient(135deg, #8B5CF6 0%, #A855F7 50%, #C084FC 100%)',
-                'gradient-brand-reverse': 'linear-gradient(135deg, #C084FC 0%, #A855F7 50%, #8B5CF6 100%)',
+                // Brand gradients (grayscale)
+                'gradient-brand': 'linear-gradient(135deg, #0A0A0F 0%, #404040 50%, #737373 100%)',
+                'gradient-brand-reverse': 'linear-gradient(135deg, #737373 0%, #404040 50%, #0A0A0F 100%)',
 
                 // Subtle background gradients
-                'gradient-light': 'linear-gradient(to bottom right, #FFFFFF 0%, #F8F9FB 100%)',
-                'gradient-light-subtle': 'linear-gradient(to bottom, #FAFAFA 0%, #F8F9FB 100%)',
+                'gradient-light': 'linear-gradient(to bottom right, #FFFFFF 0%, #F5F5F5 100%)',
+                'gradient-light-subtle': 'linear-gradient(to bottom, #FAFAFA 0%, #F5F5F5 100%)',
 
-                // Purple accent gradients
-                'gradient-purple-subtle': 'linear-gradient(135deg, #FAF5FF 0%, #F3E8FF 100%)',
-                'gradient-purple-glow': 'radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.15) 0%, transparent 50%)',
+                // Gray accent gradients
+                'gradient-gray-subtle': 'linear-gradient(135deg, #FAFAFA 0%, #F5F5F5 100%)',
+                'gradient-gray-glow': 'radial-gradient(circle at 50% 0%, rgba(115, 115, 115, 0.15) 0%, transparent 50%)',
 
                 // Dark mode gradients
-                'gradient-dark': 'linear-gradient(to bottom right, #0A0A0F 0%, #1F2937 100%)',
-                'gradient-dark-subtle': 'linear-gradient(to bottom, #111827 0%, #1F2937 100%)',
+                'gradient-dark': 'linear-gradient(to bottom right, #0A0A0F 0%, #262626 100%)',
+                'gradient-dark-subtle': 'linear-gradient(to bottom, #171717 0%, #262626 100%)',
             },
 
             // ========================================
@@ -238,10 +233,10 @@ export default {
                     'to': { opacity: '1', transform: 'scale(1)' },
                 },
 
-                // Purple pulse effect for CTAs
-                'pulsePurple': {
-                    '0%, 100%': { boxShadow: '0 0 0 0 rgba(139, 92, 246, 0.4)' },
-                    '50%': { boxShadow: '0 0 0 10px rgba(139, 92, 246, 0)' },
+                // Gray pulse effect for CTAs
+                'pulseGray': {
+                    '0%, 100%': { boxShadow: '0 0 0 0 rgba(115, 115, 115, 0.4)' },
+                    '50%': { boxShadow: '0 0 0 10px rgba(115, 115, 115, 0)' },
                 },
 
                 // Shimmer effect for loading states
@@ -262,7 +257,7 @@ export default {
                 'fadeIn': 'fadeIn 0.3s ease-out',
                 'slideUp': 'slideUp 0.4s ease-out',
                 'scaleIn': 'scaleIn 0.2s ease-out',
-                'pulsePurple': 'pulsePurple 2s ease-in-out infinite',
+                'pulseGray': 'pulseGray 2s ease-in-out infinite',
                 'shimmer': 'shimmer 2s linear infinite',
                 'bounce': 'bounce 1s ease-in-out infinite',
             },
