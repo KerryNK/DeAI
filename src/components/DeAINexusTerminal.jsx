@@ -157,8 +157,8 @@ const DeAINexusTerminal = () => {
         labels: data.slice(0, 8).map(s => s.n),
         datasets: [{
             data: data.slice(0, 8).map(s => s.mc),
-            backgroundColor: 'rgba(115,115,115,0.6)',
-            borderColor: '#737373',
+            backgroundColor: 'rgba(139,92,246,0.6)',
+            borderColor: '#8b5cf6',
             borderWidth: 1,
             borderRadius: 4
         }]
@@ -173,7 +173,7 @@ const DeAINexusTerminal = () => {
         labels: Object.keys(catData),
         datasets: [{
             data: Object.values(catData),
-            backgroundColor: ['#0A0A0A', '#262626', '#404040', '#525252', '#737373', '#A3A3A3', '#D4D4D4'],
+            backgroundColor: ['#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ec4899', '#f43f5e', '#3b82f6'],
             borderWidth: 0
         }]
     };
@@ -185,7 +185,7 @@ const DeAINexusTerminal = () => {
         labels: Object.keys(riskData),
         datasets: [{
             data: Object.values(riskData),
-            backgroundColor: ['#404040', '#525252', '#737373', '#A3A3A3'],
+            backgroundColor: ['#10b981', '#06b6d4', '#f59e0b', '#f43f5e'],
             borderWidth: 0
         }]
     };
@@ -392,9 +392,9 @@ const DeAINexusTerminal = () => {
                                                             </div>
                                                         </div>
                                                         <div className="det-g">
-                                                            <div className="det-i"><div className="det-il">Fund. Value</div><div className="det-iv" style={{ color: 'var(--light-gray)' }}>${s.fv}</div></div>
+                                                            <div className="det-i"><div className="det-il">Fund. Value</div><div className="det-iv" style={{ color: 'var(--cyan)' }}>${s.fv}</div></div>
                                                             <div className="det-i"><div className="det-il">Price</div><div className="det-iv">${s.p.toFixed(2)}</div></div>
-                                                            <div className="det-i"><div className="det-il">Premium</div><div className="det-iv" style={{ color: parseFloat(s.sp) < 15 ? 'var(--dark-gray)' : 'var(--darker-gray)' }}>{parseFloat(s.sp) >= 0 ? '+' : ''}{s.sp}%</div></div>
+                                                            <div className="det-i"><div className="det-il">Premium</div><div className="det-iv" style={{ color: parseFloat(s.sp) < 15 ? 'var(--green)' : 'var(--rose)' }}>{parseFloat(s.sp) >= 0 ? '+' : ''}{s.sp}%</div></div>
                                                             <div className="det-i"><div className="det-il">Rev Coverage</div><div className="det-iv">{s.rc}%</div></div>
                                                         </div>
                                                         <div className="det-n">FV = Daily OpEx (${(s.opex / 365 / 1000).toFixed(1)}K) ÷ Daily Emissions ({s.dt}τ)</div>
@@ -419,7 +419,7 @@ const DeAINexusTerminal = () => {
                                                             <div className="det-i"><div className="det-il">Miners</div><div className="det-iv">{s.min}</div></div>
                                                             <div className="det-i"><div className="det-il">Stake</div><div className="det-iv">${s.stk}M</div></div>
                                                             <div className="det-i"><div className="det-il">UID Util</div><div className="det-iv">{s.uid}%</div></div>
-                                                            <div className="det-i"><div className="det-il">Emission</div><div className="det-iv" style={{ color: 'var(--medium-gray)' }}>{s.em}%</div></div>
+                                                            <div className="det-i"><div className="det-il">Emission</div><div className="det-iv" style={{ color: 'var(--amber)' }}>{s.em}%</div></div>
                                                             <div className="det-i"><div className="det-il">Daily TAO</div><div className="det-iv">{s.dt}τ</div></div>
                                                         </div>
                                                     </div>
@@ -431,10 +431,10 @@ const DeAINexusTerminal = () => {
                                                         <div className="det-g3">
                                                             <div className="det-i"><div className="det-il">TAO Pool</div><div className="det-iv">${s.taoP}M</div></div>
                                                             <div className="det-i"><div className="det-il">Alpha</div><div className="det-iv">{s.alpP}Mα</div></div>
-                                                            <div className="det-i"><div className="det-il">Liquidity</div><div className="det-iv" style={{ color: 'var(--light-gray)' }}>$ {s.liq}M</div></div>
+                                                            <div className="det-i"><div className="det-il">Liquidity</div><div className="det-iv" style={{ color: 'var(--cyan)' }}>$ {s.liq}M</div></div>
                                                             <div className="det-i"><div className="det-il">Liq/MCap</div><div className="det-iv">{s.liqM}%</div></div>
                                                             <div className="det-i"><div className="det-il">24H Vol</div><div className="det-iv">${s.vol}M</div></div>
-                                                            <div className="det-i"><div className="det-il">APY</div><div className="det-iv" style={{ color: 'var(--dark-gray)' }}>{s.apy}%</div></div>
+                                                            <div className="det-i"><div className="det-il">APY</div><div className="det-iv" style={{ color: 'var(--green)' }}>{s.apy}%</div></div>
                                                         </div>
                                                     </div>
 
@@ -451,11 +451,11 @@ const DeAINexusTerminal = () => {
                                                         <div className="det-g" style={{ marginTop: '10px' }}>
                                                             <div className="det-i">
                                                                 <div className="det-il">Risk Level</div>
-                                                                <div className="det-iv" style={{ color: s.risk === 'Very Low' || s.risk === 'Low' ? 'var(--dark-gray)' : s.risk === 'Medium' ? 'var(--medium-gray)' : 'var(--darker-gray)' }}>{s.risk}</div>
+                                                                <div className="det-iv" style={{ color: s.risk === 'Very Low' || s.risk === 'Low' ? 'var(--green)' : s.risk === 'Medium' ? 'var(--amber)' : 'var(--rose)' }}>{s.risk}</div>
                                                             </div>
                                                             <div className="det-i">
                                                                 <div className="det-il">Signal</div>
-                                                                <div className="det-iv" style={{ color: s.rec === 'Strong Buy' ? 'var(--dark-gray)' : s.rec === 'Buy' ? 'var(--light-gray)' : s.rec === 'Hold' ? 'var(--medium-gray)' : 'var(--darker-gray)' }}>{s.rec}</div>
+                                                                <div className="det-iv" style={{ color: s.rec === 'Strong Buy' ? 'var(--green)' : s.rec === 'Buy' ? 'var(--cyan)' : s.rec === 'Hold' ? 'var(--amber)' : 'var(--rose)' }}>{s.rec}</div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -496,13 +496,13 @@ const DeAINexusTerminal = () => {
                                     </div>
                                     <div className="calc-r">
                                         <div className="calc-rl">Fundamental Value</div>
-                                        <div className="calc-rv" style={{ color: 'var(--light-gray)' }}>${fvResults.fv}</div>
+                                        <div className="calc-rv" style={{ color: 'var(--cyan)' }}>${fvResults.fv}</div>
                                         <div className="calc-rs">Daily OpEx: ${fvResults.dailyOpex}K</div>
                                     </div>
                                     <div className="mini">
-                                        <div className="mini-i"><div className="mini-v" style={{ color: 'var(--medium-gray)' }}>{fvResults.sp >= 0 ? '+' : ''}{fvResults.sp}%</div><div className="mini-l">Premium</div></div>
-                                        <div className="mini-i"><div className="mini-v" style={{ color: 'var(--dark-gray)' }}>${fvResults.pv}M</div><div className="mini-l">PV 4Y</div></div>
-                                        <div className="mini-i"><div className="mini-v" style={{ color: 'var(--gray)' }}>${fvResults.tr}K</div><div className="mini-l">Return</div></div>
+                                        <div className="mini-i"><div className="mini-v" style={{ color: 'var(--amber)' }}>{fvResults.sp >= 0 ? '+' : ''}{fvResults.sp}%</div><div className="mini-l">Premium</div></div>
+                                        <div className="mini-i"><div className="mini-v" style={{ color: 'var(--green)' }}>${fvResults.pv}M</div><div className="mini-l">PV 4Y</div></div>
+                                        <div className="mini-i"><div className="mini-v" style={{ color: 'var(--violet)' }}>${fvResults.tr}K</div><div className="mini-l">Return</div></div>
                                     </div>
                                 </div>
 
@@ -520,13 +520,13 @@ const DeAINexusTerminal = () => {
                                     </div>
                                     <div className="calc-r">
                                         <div className="calc-rl">Fair Value</div>
-                                        <div className="calc-rv" style={{ color: 'var(--dark-gray)' }}>{dcfResults.fv}τ</div>
+                                        <div className="calc-rv" style={{ color: 'var(--green)' }}>{dcfResults.fv}τ</div>
                                         <div className="calc-rs">≈${dcfResults.usd}M</div>
                                     </div>
                                     <div className="mini">
-                                        <div className="mini-i"><div className="mini-v" style={{ color: 'var(--dark-gray)' }}>{dcfResults.rt}x</div><div className="mini-l">Ratio</div></div>
-                                        <div className="mini-i"><div className="mini-v" style={{ color: 'var(--dark-gray)' }}>{dcfResults.up >= 0 ? '+' : ''}{dcfResults.up}%</div><div className="mini-l">Upside</div></div>
-                                        <div className="mini-i"><div className="mini-v" style={{ color: 'var(--dark-gray)' }}>{dcfResults.signal}</div><div className="mini-l">Signal</div></div>
+                                        <div className="mini-i"><div className="mini-v" style={{ color: 'var(--green)' }}>{dcfResults.rt}x</div><div className="mini-l">Ratio</div></div>
+                                        <div className="mini-i"><div className="mini-v" style={{ color: 'var(--green)' }}>{dcfResults.up >= 0 ? '+' : ''}{dcfResults.up}%</div><div className="mini-l">Upside</div></div>
+                                        <div className="mini-i"><div className="mini-v" style={{ color: 'var(--green)' }}>{dcfResults.signal}</div><div className="mini-l">Signal</div></div>
                                     </div>
                                 </div>
 
@@ -542,7 +542,7 @@ const DeAINexusTerminal = () => {
                                     </div>
                                     <div className="calc-r">
                                         <div className="calc-rl">Daily TAO</div>
-                                        <div className="calc-rv" style={{ color: 'var(--light-gray)' }}>{emResults.dt}τ</div>
+                                        <div className="calc-rv" style={{ color: 'var(--cyan)' }}>{emResults.dt}τ</div>
                                         <div className="calc-rs">${emResults.du}/day</div>
                                     </div>
                                     <div className="mini">
@@ -566,7 +566,7 @@ const DeAINexusTerminal = () => {
                                     </div>
                                     <div className="calc-r">
                                         <div className="calc-rl">Score</div>
-                                        <div className="calc-rv" style={{ color: 'var(--dark-gray)' }}>{csResults.cs}</div>
+                                        <div className="calc-rv" style={{ color: 'var(--green)' }}>{csResults.cs}</div>
                                         <div className="calc-rs">{csResults.rating} • {csResults.risk} Risk</div>
                                     </div>
                                 </div>

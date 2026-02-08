@@ -388,27 +388,27 @@
 
 /* CSS Variables for theming */
 :root {
-  --bg: #080810;
-  --bg2: #0d0d18;
-  --bg3: #141420;
-  --card: #12121c;
+  --bg: #000000;
+  --bg2: #0a0a0a;
+  --bg3: #141414;
+  --card: #1a1a1a;
   --bdr: #252538;
   --txt: #f4f4f8;
   --txt2: #a0a0b8;
   --mute: #606078;
-  --gray: #737373;
-  --light-gray: #9CA3AF;
-  --dark-gray: #525252;
-  --medium-gray: #6B6B7F;
-  --darker-gray: #404040;
-  --grad: linear-gradient(135deg, #0A0A0F, #737373);
+  --violet: #8b5cf6;
+  --cyan: #06b6d4;
+  --green: #10b981;
+  --amber: #f59e0b;
+  --rose: #f43f5e;
+  --grad: linear-gradient(135deg, #8b5cf6, #06b6d4);
 }
 
 .light {
-  --bg: #f5f5fa;
-  --bg2: #fff;
-  --bg3: #eef;
-  --card: #fff;
+  --bg: #ffffff;
+  --bg2: #fafafa;
+  --bg3: #f5f5f5;
+  --card: #ffffff;
   --bdr: #dde;
   --txt: #18182a;
   --txt2: #556;
