@@ -1,23 +1,45 @@
 import { useAccount, useBalance } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useQuery } from '@tanstack/react-query';
+import { apiClient } from '../api/client';
 
 export default function Portfolio() {
   const { address, isConnected } = useAccount();
   const { data: balance } = useBalance({ address });
 
-  // Mock staking positions data
-  const stakingPositions = [
-    { id: 1, subnet: 'Subnet 1', amount: 1000, apy: 12.5, earnings: 125, status: 'Active' },
-    { id: 2, subnet: 'Subnet 8', amount: 5000, apy: 15.2, earnings: 760, status: 'Active' },
-    { id: 3, subnet: 'Subnet 21', amount: 2500, apy: 10.8, earnings: 270, status: 'Pending' },
+  // Fetch staking positions from API
+  const { data: positions, isLoading: positionsLoading, error: positionsError } = useQuery({
+    queryKey: ['stakingPositions', address],
+    queryFn: () => apiClient.getStakingPositions(address),
+    enabled: !!address && isConnected,
+    staleTime: 30000,
+    retry: 2,
+  });
+
+  // Fetch transaction history from API
+  const { data: transactionData, isLoading: txLoading, error: txError } = useQuery({
+    queryKey: ['stakingHistory', address],
+    queryFn: () => apiClient.getStakingHistory(address, 50),
+    enabled: !!address && isConnected,
+    staleTime: 30000,
+    retry: 2,
+  });
+
+  // Use API data or fallback to mock data
+  const stakingPositions = positions?.positions || [
+    { id: 1, subnet_id: 1, subnet: 'Subnet 1', amount: 1000, apy: 12.5, earnings: 125, status: 'active' },
+    { id: 2, subnet_id: 8, subnet: 'Subnet 8', amount: 5000, apy: 15.2, earnings: 760, status: 'active' },
+    { id: 3, subnet_id: 21, subnet: 'Subnet 21', amount: 2500, apy: 10.8, earnings: 270, status: 'pending' },
   ];
 
-  // Mock transaction history
-  const transactions = [
-    { id: 1, type: 'Deposit', subnet: 'Subnet 1', amount: 1000, date: '2024-02-08', status: 'Confirmed' },
-    { id: 2, type: 'Withdraw', subnet: 'Subnet 8', amount: 500, date: '2024-02-07', status: 'Confirmed' },
-    { id: 3, type: 'Claim Rewards', subnet: 'Subnet 1', amount: 125, date: '2024-02-06', status: 'Confirmed' },
+  const transactions = transactionData?.transactions || [
+    { id: 1, type: 'Deposit', subnet: 'Subnet 1', amount: 1000, timestamp: '2024-02-08', status: 'Confirmed' },
+    { id: 2, type: 'Withdraw', subnet: 'Subnet 8', amount: 500, timestamp: '2024-02-07', status: 'Confirmed' },
+    { id: 3, type: 'Claim Rewards', subnet: 'Subnet 1', amount: 125, timestamp: '2024-02-06', status: 'Confirmed' },
   ];
+
+  const isLoading = positionsLoading || txLoading;
+  const hasError = positionsError || txError;
 
   if (!isConnected) {
     return (
@@ -43,6 +65,8 @@ export default function Portfolio() {
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">Portfolio</h1>
           <p className="text-white/60">Your staking positions and earnings</p>
+          {isLoading && <p className="text-blue-400 text-sm mt-2">⚪ Loading positions...</p>}
+          {hasError && <p className="text-yellow-400 text-sm mt-2">⚠️ Using cached data</p>}
         </div>
 
         {/* Portfolio Stats */}

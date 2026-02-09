@@ -1,9 +1,19 @@
 import { useAccount, useBalance } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useQuery } from '@tanstack/react-query';
+import { apiClient } from '../api/client';
 
 export default function Wallet() {
   const { address, isConnected } = useAccount();
   const { data: balance } = useBalance({ address });
+
+  // Fetch dashboard data for market context
+  const { data: dashboardData, isLoading: dashboardLoading } = useQuery({
+    queryKey: ['dashboard'],
+    queryFn: () => apiClient.getDashboard(),
+    staleTime: 30000,
+    retry: 2,
+  });
 
   if (!isConnected) {
     return (
@@ -45,6 +55,19 @@ export default function Wallet() {
             <div className="text-3xl font-bold">
               {balance ? `${parseFloat(balance.formatted).toFixed(4)} ${balance.symbol}` : '0 ETH'}
             </div>
+          </div>
+
+          {/* TAO Price Card */}
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+            <div className="text-white/60 text-sm mb-2">TAO Price</div>
+            <div className="text-3xl font-bold">
+              ${dashboardData?.tao?.price?.price ? dashboardData.tao.price.price.toFixed(2) : 'N/A'}
+            </div>
+            {dashboardData?.tao?.price?.change24h && (
+              <div className={dashboardData.tao.price.change24h >= 0 ? 'text-green-400 text-sm mt-1' : 'text-red-400 text-sm mt-1'}>
+                {dashboardData.tao.price.change24h >= 0 ? '+' : ''}{dashboardData.tao.price.change24h.toFixed(2)}%
+              </div>
+            )}
           </div>
         </div>
 

@@ -33,7 +33,7 @@ async function fetchAPI(endpoint, options = {}) {
 }
 
 /**
- * DeAI API Client
+ * Health check
  */
 export const apiClient = {
   /**
@@ -43,33 +43,17 @@ export const apiClient = {
     return fetchAPI('/health');
   },
 
-  // ===== TAO PRICE & MARKET DATA =====
-
   /**
-   * Get current TAO price (30s cache)
+   * Get general Bittensor network statistics
    */
-  async getTaoPrice() {
-    return fetchAPI('/tao/price');
-  },
-
-  /**
-   * Get TAO market cap (5m cache)
-   */
-  async getTaoMarketcap() {
-    return fetchAPI('/tao/marketcap');
-  },
-
-  /**
-   * Get complete dashboard data (aggregated)
-   */
-  async getDashboard() {
-    return fetchAPI('/dashboard');
+  async getStats() {
+    return fetchAPI('/stats');
   },
 
   // ===== SUBNETS =====
 
   /**
-   * Get list of all subnets (60s cache)
+   * Get list of all subnets
    */
   async getSubnets() {
     return fetchAPI('/subnets');
@@ -77,55 +61,61 @@ export const apiClient = {
 
   /**
    * Get detailed information for a specific subnet
-   * @param {number} subnetId - The subnet ID
+   * @param {number} netuid - The subnet network UID
    */
-  async getSubnetDetails(subnetId) {
-    return fetchAPI(`/subnets/${subnetId}`);
+  async getSubnetDetails(netuid) {
+    return fetchAPI(`/subnet/${netuid}`);
   },
-
-  // ===== VALIDATORS =====
 
   /**
-   * Get all validators (60s cache)
+   * Get APY information for a subnet
+   * @param {number} netuid - The subnet network UID
    */
-  async getValidators() {
-    return fetchAPI('/validators');
+  async getSubnetAPY(netuid) {
+    return fetchAPI(`/apy/${netuid}`);
   },
+
+  // ===== VALIDATORS & NEURONS =====
 
   /**
    * Get validators for a specific subnet
-   * @param {number} subnetId - The subnet ID
+   * @param {number} netuid - The subnet network UID
    */
-  async getSubnetValidators(subnetId) {
-    return fetchAPI(`/subnets/${subnetId}/validators`);
-  },
-
-  // ===== EMISSIONS =====
-
-  /**
-   * Get current emissions data (60s cache)
-   */
-  async getEmissions() {
-    return fetchAPI('/emissions');
-  },
-
-  // ===== STAKING =====
-
-  /**
-   * Get user staking positions
-   * @param {string} address - Wallet address
-   */
-  async getStakingPositions(address) {
-    return fetchAPI(`/staking/positions/${address}`);
+  async getValidators(netuid) {
+    return fetchAPI(`/validators/${netuid}`);
   },
 
   /**
-   * Get user staking transaction history
-   * @param {string} address - Wallet address
-   * @param {number} limit - Number of transactions to fetch (default: 50)
+   * Get neurons (miners) for a specific subnet
+   * @param {number} netuid - The subnet network UID
    */
-  async getStakingHistory(address, limit = 50) {
-    return fetchAPI(`/staking/history/${address}?limit=${limit}`);
+  async getNeurons(netuid) {
+    return fetchAPI(`/neurons/${netuid}`);
+  },
+
+  // ===== DELEGATION & SEARCH =====
+
+  /**
+   * Get weight copy (delegation) information
+   */
+  async getWeightCopyInfo() {
+    return fetchAPI('/weight-copy');
+  },
+
+  /**
+   * Get nominator (delegator) information
+   * @param {string} hotkey - The wallet hotkey
+   */
+  async getNominatorInfo(hotkey) {
+    return fetchAPI(`/nominator/${hotkey}`);
+  },
+
+  /**
+   * Search for hotkeys, validators, or subnet info
+   * @param {string} query - Search query
+   */
+  async search(query) {
+    return fetchAPI(`/search/${encodeURIComponent(query)}`);
   },
 };
 
