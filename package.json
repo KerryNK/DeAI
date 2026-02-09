@@ -12,11 +12,15 @@
         "backend:install": "cd backend && pip install -r requirements.txt"
     },
     "dependencies": {
+        "@rainbow-me/rainbowkit": "^2.1.2",
         "chart.js": "^4.5.1",
         "lucide-react": "^0.294.0",
         "react": "^18.2.0",
         "react-chartjs-2": "^5.3.1",
-        "react-dom": "^18.2.0"
+        "react-dom": "^18.2.0",
+        "react-router-dom": "^6.21.0",
+        "viem": "^2.1.0",
+        "wagmi": "^2.6.0"
     },
     "devDependencies": {
         "@types/react": "^18.2.43",

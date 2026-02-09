@@ -1,4 +1,10 @@
 import { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { WagmiProvider, createConfig, http } from 'wagmi';
+import { mainnet } from 'wagmi/chains';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import '@rainbow-me/rainbowkit/styles.css';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
@@ -8,66 +14,56 @@ import Scoring from './pages/Scoring';
 import Portfolio from './pages/Portfolio';
 import History from './pages/History';
 
-function App() {
-    const [currentPage, setCurrentPage] = useState('dashboard');
-    const [theme, setTheme] = useState('dark');
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+// Setup wagmi
+const config = createConfig({
+  chains: [mainnet],
+  transports: {
+    [mainnet.id]: http(),
+  },
+});
 
-    const renderPage = () => {
-        switch (currentPage) {
-            case 'dashboard':
-                return <Dashboard />;
-            case 'scoring':
-                return <Scoring />;
-            case 'portfolio':
-                return <Portfolio />;
-            case 'history':
-                return <History />;
-            case 'statistics':
-                return <Statistics />;
-            case 'home':
-                return <Home />;
-            default:
-                return <Dashboard />;
-        }
-    };
+const queryClient = new QueryClient();
 
-    const toggleTheme = () => {
-        setTheme(theme === 'dark' ? 'light' : 'dark');
-    };
+function AppContent() {
+  const location = useLocation();
+  const isAppRoute = location.pathname.startsWith('/app');
 
-    return (
-        <div className={theme}>
-            <div
-                className={`min-h-screen flex flex-col ${
-                    theme === 'dark'
-                        ? 'bg-slate-950 text-white'
-                        : 'bg-white text-slate-900'
-                }`}
-            >
-                {/* Navbar */}
-                <Navbar theme={theme} onThemeChange={toggleTheme} />
-
-                <div className="flex flex-1 overflow-hidden">
-                    {/* Sidebar */}
-                    <Sidebar
-                        theme={theme}
-                        currentPage={currentPage}
-                        onPageChange={(page) => {
-                            setCurrentPage(page);
-                            setSidebarOpen(false);
-                        }}
-                        isOpen={sidebarOpen}
-                    />
-
-                    {/* Main Content */}
-                    <main className="flex-1 overflow-auto">
-                        {renderPage()}
-                    </main>
-                </div>
-            </div>
+  return (
+    <div className="min-h-screen bg-black text-white">
+      <Navbar />
+      
+      <div className={`transition-all duration-300 ${isAppRoute ? 'lg:ml-64' : ''}`}>
+        {/* Sidebar for app routes */}
+        {isAppRoute && <Sidebar />}
+        
+        {/* Page content */}
+        <div className="p-8 max-w-7xl mx-auto lg:pl-4 lg:pr-8">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/statistics" element={<Statistics />} />
+            <Route path="/app/dashboard" element={<Dashboard />} />
+            <Route path="/app/scoring" element={<Scoring />} />
+            <Route path="/app/portfolio" element={<Portfolio />} />
+            <Route path="/app/history" element={<History />} />
+          </Routes>
         </div>
-    );
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <RainbowKitProvider>
+          <Router>
+            <AppContent />
+          </Router>
+        </RainbowKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
+  );
 }
 
 export default App;

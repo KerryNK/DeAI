@@ -1,70 +1,37 @@
-import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
-export default function Sidebar({ theme, currentPage, onPageChange, isOpen }) {
-    const navItems = [
-        { id: 'dashboard', label: 'Dashboard', icon: '📊' },
-        { id: 'scoring', label: 'Scoring', icon: '🎯' },
-        { id: 'portfolio', label: 'Portfolio', icon: '💼' },
-        { id: 'history', label: 'History', icon: '📈' },
-        { id: 'statistics', label: 'Statistics', icon: '📉' },
-    ];
+const navItems = [
+  { to: '/app/dashboard', label: 'Dashboard', icon: '📊' },
+  { to: '/app/scoring', label: 'Scoring Metrics', icon: '🎯' },
+  { to: '/app/portfolio', label: 'Portfolio', icon: '💼' },
+  { to: '/app/history', label: 'History', icon: '📜' },
+];
 
-    return (
-        <>
-            {/* Mobile Overlay */}
-            {isOpen && (
-                <div
-                    className="fixed inset-0 bg-black bg-opacity-50 md:hidden z-40"
-                    onClick={() => onPageChange(null)}
-                />
-            )}
+export default function Sidebar() {
+  const location = useLocation();
 
-            {/* Sidebar */}
-            <aside
-                className={`fixed md:relative left-0 top-16 md:top-0 w-64 h-[calc(100vh-4rem)] md:h-full ${
-                    theme === 'dark'
-                        ? 'bg-slate-900 border-slate-800'
-                        : 'bg-slate-50 border-slate-200'
-                } border-r transition-all duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} md:translate-x-0 z-40`}
+  return (
+    <aside className="sidebar fixed left-0 top-[6rem] h-[calc(100vh-6rem)] w-72 bg-black/95 backdrop-blur-xl border-r border-white/10 z-40">
+      <nav className="p-8 space-y-3">
+        {navItems.map((item) => {
+          const active = location.pathname === item.to;
+          return (
+            <Link
+              key={item.to}
+              to={item.to}
+              className={`flex items-center space-x-4 p-5 rounded-2xl transition-all duration-300 group border ${
+                active
+                  ? 'nav-link active bg-white/5 border-white/50 shadow-xl text-white'
+                  : 'text-white/70 hover:text-white border-white/10 hover:border-white/40 hover:bg-white/5'
+              }`}
             >
-                <div className="p-6 space-y-2">
-                    <div className={`text-xs font-semibold uppercase tracking-wider mb-4 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-600'}`}>
-                        Navigation
-                    </div>
-                    {navItems.map((item) => (
-                        <button
-                            key={item.id}
-                            onClick={() => onPageChange(item.id)}
-                            className={`w-full px-4 py-3 rounded-lg transition text-left flex items-center space-x-3 font-medium ${
-                                currentPage === item.id
-                                    ? theme === 'dark'
-                                        ? 'bg-violet-600 text-white'
-                                        : 'bg-violet-100 text-violet-900'
-                                    : theme === 'dark'
-                                    ? 'text-slate-300 hover:bg-slate-800'
-                                    : 'text-slate-700 hover:bg-slate-100'
-                            }`}
-                        >
-                            <span>{item.icon}</span>
-                            <span>{item.label}</span>
-                        </button>
-                    ))}
-                </div>
-
-                {/* Sidebar Footer */}
-                <div
-                    className={`absolute bottom-0 left-0 right-0 p-6 border-t ${
-                        theme === 'dark'
-                            ? 'bg-slate-800 border-slate-700'
-                            : 'bg-slate-100 border-slate-200'
-                    }`}
-                >
-                    <div className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
-                        <div className="font-semibold mb-1">DeAI Nexus v3</div>
-                        <div>Powered by Bittensor</div>
-                    </div>
-                </div>
-            </aside>
-        </>
-    );
+              <span className="text-2xl">{item.icon}</span>
+              <span className="font-bold text-lg">{item.label}</span>
+              {active && <div className="ml-auto w-2 h-2 bg-white rounded-full" />}
+            </Link>
+          );
+        })}
+      </nav>
+    </aside>
+  );
 }
