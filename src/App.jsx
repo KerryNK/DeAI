@@ -13,6 +13,7 @@ import Statistics from './pages/Statistics';
 import Scoring from './pages/Scoring';
 import Portfolio from './pages/Portfolio';
 import History from './pages/History';
+import Wallet from './pages/Wallet';
 
 // Setup wagmi
 const config = createConfig({
@@ -45,6 +46,7 @@ function AppContent() {
             <Route path="/app/scoring" element={<Scoring />} />
             <Route path="/app/portfolio" element={<Portfolio />} />
             <Route path="/app/history" element={<History />} />
+            <Route path="/app/wallet" element={<Wallet />} />
           </Routes>
         </div>
       </div>

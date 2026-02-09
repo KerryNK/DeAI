@@ -4,6 +4,7 @@ const navItems = [
   { to: '/app/dashboard', label: 'Dashboard', icon: '📊' },
   { to: '/app/scoring', label: 'Scoring Metrics', icon: '🎯' },
   { to: '/app/portfolio', label: 'Portfolio', icon: '💼' },
+  { to: '/app/wallet', label: 'Wallet', icon: '👛' },
   { to: '/app/history', label: 'History', icon: '📜' },
 ];
 
