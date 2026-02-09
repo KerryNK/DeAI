@@ -1,192 +1,290 @@
 """
 DeAI Backend - FastAPI Server
-Integrates with taostats for subnet and validator data
+Live TAO data, Redis caching, PostgreSQL integration
 """
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import httpx
+import redis
 import os
 from dotenv import load_dotenv
 from typing import Optional
+import logging
+import asyncio
+from datetime import datetime
+
+# Import services
+from services.taostats import TAOStatsService
+from services.coingecko import CoinGeckoService
+from services.cache import CacheService
+from services.database import Database
 
 load_dotenv()
 
-# Global httpx client
-client: Optional[httpx.AsyncClient] = None
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Global instances
+cache_service: Optional[CacheService] = None
+taostats_service: Optional[TAOStatsService] = None
+coingecko_service: Optional[CoinGeckoService] = None
+db: Optional[Database] = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Manage app lifecycle - initialize and cleanup httpx client"""
-    global client
-    client = httpx.AsyncClient(timeout=30.0)
-    yield
-    await client.aclose()
+    """Manage app lifecycle - startup and shutdown"""
+    global cache_service, taostats_service, coingecko_service, db
+    
+    # Startup
+    logger.info("Starting DeAI Backend...")
+    
+    try:
+        # Initialize services
+        cache_service = CacheService()
+        taostats_service = TAOStatsService()
+        coingecko_service = CoinGeckoService()
+        db = Database()
+        
+        logger.info("All services initialized successfully")
+        
+        yield
+        
+    finally:
+        # Shutdown
+        logger.info("Shutting down DeAI Backend...")
+        if cache_service:
+            cache_service.close()
+        logger.info("Cleanup complete")
 
+# Create FastAPI app
 app = FastAPI(
     title="DeAI Backend",
-    description="API for DeAI Subnet Dashboard - Taostats Integration",
+    description="Live Bittensor subnet staking data",
     version="1.0.0",
     lifespan=lifespan
 )
 
-# Enable CORS for local development and production
-origins = [
-    "http://localhost:5173",  # Vite dev server
-    "http://localhost:3000",
-    "http://localhost:8000",
-    "http://127.0.0.1:5173",
-    "http://127.0.0.1:3000",
-]
-
-# Add production URLs from environment variables
-if frontend_url := os.getenv("FRONTEND_URL"):
-    origins.append(frontend_url)
-
+# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],  # Configure based on deployment
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Taostats API base URL
-TAOSTATS_API = "https://api.taostats.io"
+# ============================================
+# HEALTH CHECK
+# ============================================
 
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
     return {
-        "status": "healthy",
-        "service": "DeAI Backend",
-        "version": "1.0.0"
+        "status": "ok",
+        "timestamp": datetime.now().isoformat(),
+        "services": {
+            "cache": "ok" if cache_service else "offline",
+            "database": "ok" if db else "offline",
+        }
     }
+
+# ============================================
+# TAO PRICE ENDPOINTS
+# ============================================
+
+@app.get("/api/tao/price")
+async def get_tao_price():
+    """Get current TAO price with 30s cache"""
+    try:
+        # Try cache first
+        cached = cache_service.get("tao_price")
+        if cached:
+            return cached
+        
+        # Fetch from CoinGecko
+        price_data = await coingecko_service.get_tao_price()
+        
+        # Cache for 30 seconds
+        cache_service.set("tao_price", price_data, ttl=30)
+        
+        return price_data
+        
+    except Exception as e:
+        logger.error(f"Error fetching TAO price: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/tao/marketcap")
+async def get_tao_marketcap():
+    """Get TAO market cap with 5m cache"""
+    try:
+        cached = cache_service.get("tao_marketcap")
+        if cached:
+            return cached
+        
+        cap_data = await coingecko_service.get_tao_marketcap()
+        cache_service.set("tao_marketcap", cap_data, ttl=300)
+        
+        return cap_data
+        
+    except Exception as e:
+        logger.error(f"Error fetching TAO marketcap: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ============================================
+# SUBNET ENDPOINTS
+# ============================================
 
 @app.get("/api/subnets")
 async def get_subnets():
-    """
-    Get list of all subnets from Taostats
-    Returns basic subnet information including netuid, name, and stats
-    """
+    """Get all subnets with 60s cache"""
     try:
-        response = await client.get(f"{TAOSTATS_API}/api/subnets")
-        response.raise_for_status()
-        return response.json()
-    except httpx.HTTPError as e:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch subnets: {str(e)}")
+        cached = cache_service.get("subnets_list")
+        if cached:
+            return cached
+        
+        subnets = await taostats_service.get_subnets()
+        cache_service.set("subnets_list", subnets, ttl=60)
+        
+        return {"subnets": subnets, "count": len(subnets)}
+        
+    except Exception as e:
+        logger.error(f"Error fetching subnets: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/subnet/{netuid}")
-async def get_subnet_details(netuid: int):
-    """
-    Get detailed information for a specific subnet
-    Includes validators, incentive, emission, and performance metrics
-    """
+@app.get("/api/subnets/{subnet_id}")
+async def get_subnet_detail(subnet_id: int):
+    """Get specific subnet details"""
     try:
-        response = await client.get(f"{TAOSTATS_API}/api/subnet/{netuid}")
-        response.raise_for_status()
-        return response.json()
-    except httpx.HTTPError as e:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch subnet {netuid}: {str(e)}")
+        cache_key = f"subnet_{subnet_id}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        
+        subnet = await taostats_service.get_subnet(subnet_id)
+        cache_service.set(cache_key, subnet, ttl=60)
+        
+        return subnet
+        
+    except Exception as e:
+        logger.error(f"Error fetching subnet {subnet_id}: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/validators/{netuid}")
-async def get_validators(netuid: int):
-    """
-    Get list of validators for a specific subnet
-    Returns validator hotkeys, stake, and performance metrics
-    """
-    try:
-        response = await client.get(f"{TAOSTATS_API}/api/subnet/{netuid}/validators")
-        response.raise_for_status()
-        return response.json()
-    except httpx.HTTPError as e:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch validators for subnet {netuid}: {str(e)}")
+# ============================================
+# DASHBOARD ENDPOINTS
+# ============================================
 
-@app.get("/api/neurons/{netuid}")
-async def get_neurons(netuid: int):
-    """
-    Get list of neurons (miners) for a specific subnet
-    Returns neuron details including stake, dividends, and incentive values
-    """
+@app.get("/api/dashboard")
+async def get_dashboard():
+    """Get complete dashboard data (aggregated)"""
     try:
-        response = await client.get(f"{TAOSTATS_API}/api/subnet/{netuid}/neurons")
-        response.raise_for_status()
-        return response.json()
-    except httpx.HTTPError as e:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch neurons for subnet {netuid}: {str(e)}")
+        cached = cache_service.get("dashboard")
+        if cached:
+            return cached
+        
+        # Fetch all data in parallel
+        price_task = coingecko_service.get_tao_price()
+        marketcap_task = coingecko_service.get_tao_marketcap()
+        subnets_task = taostats_service.get_subnets()
+        market_task = taostats_service.get_market_data()
+        
+        price, marketcap, subnets, market = await asyncio.gather(
+            price_task, marketcap_task, subnets_task, market_task
+        )
+        
+        dashboard = {
+            "tao": {
+                "price": price,
+                "marketcap": marketcap,
+            },
+            "network": {
+                "subnets": len(subnets),
+                "market": market,
+            },
+            "timestamp": datetime.now().isoformat(),
+        }
+        
+        cache_service.set("dashboard", dashboard, ttl=60)
+        return dashboard
+        
+    except Exception as e:
+        logger.error(f"Error fetching dashboard: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/apy/{netuid}")
-async def get_apy(netuid: int):
-    """
-    Get APY (Annual Percentage Yield) information for a subnet
-    Includes validator APY, miner APY, and composite returns
-    """
-    try:
-        response = await client.get(f"{TAOSTATS_API}/api/subnet/{netuid}/apy")
-        response.raise_for_status()
-        return response.json()
-    except httpx.HTTPError as e:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch APY for subnet {netuid}: {str(e)}")
+# ============================================
+# STAKING ENDPOINTS
+# ============================================
 
-@app.get("/api/weight-copy")
-async def get_weight_copy_info():
-    """
-    Get weight copy (delegation) information across subnets
-    Returns top weight copy operators and their earnings
-    """
+@app.get("/api/staking/positions/{address}")
+async def get_staking_positions(address: str):
+    """Get user staking positions from database"""
     try:
-        response = await client.get(f"{TAOSTATS_API}/api/weight-copy")
-        response.raise_for_status()
-        return response.json()
-    except httpx.HTTPError as e:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch weight copy info: {str(e)}")
+        positions = db.get_user_staking_positions(address)
+        return {"positions": positions, "count": len(positions)}
+    except Exception as e:
+        logger.error(f"Error fetching staking positions: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/nominator/{hotkey}")
-async def get_nominator_info(hotkey: str):
-    """
-    Get nominator (delegator) information
-    Returns delegation details, stake, and rewards for a specific hotkey
-    """
+@app.get("/api/staking/history/{address}")
+async def get_staking_history(address: str, limit: int = 50):
+    """Get user staking transaction history"""
     try:
-        response = await client.get(f"{TAOSTATS_API}/api/nominator/{hotkey}")
-        response.raise_for_status()
-        return response.json()
-    except httpx.HTTPError as e:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch nominator info for {hotkey}: {str(e)}")
+        history = db.get_user_transaction_history(address, limit)
+        return {"transactions": history, "count": len(history)}
+    except Exception as e:
+        logger.error(f"Error fetching staking history: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/search/{query}")
-async def search(query: str):
-    """
-    Search for hotkeys, validators, or subnet info
-    Returns matching results across different entity types
-    """
-    try:
-        response = await client.get(f"{TAOSTATS_API}/api/search", params={"q": query})
-        response.raise_for_status()
-        return response.json()
-    except httpx.HTTPError as e:
-        raise HTTPException(status_code=500, detail=f"Search failed for '{query}': {str(e)}")
+# ============================================
+# VALIDATORS ENDPOINTS
+# ============================================
 
-@app.get("/api/stats")
-async def get_general_stats():
-    """
-    Get general Bittensor network statistics
-    Includes total stake, token supply, and network health metrics
-    """
+@app.get("/api/validators")
+async def get_validators():
+    """Get validators list with 60s cache"""
     try:
-        response = await client.get(f"{TAOSTATS_API}/api/stats")
-        response.raise_for_status()
-        return response.json()
-    except httpx.HTTPError as e:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch general stats: {str(e)}")
+        cached = cache_service.get("validators_list")
+        if cached:
+            return cached
+        
+        validators = await taostats_service.get_validators()
+        cache_service.set("validators_list", validators, ttl=60)
+        
+        return {"validators": validators, "count": len(validators)}
+        
+    except Exception as e:
+        logger.error(f"Error fetching validators: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ============================================
+# EMISSIONS ENDPOINTS
+# ============================================
+
+@app.get("/api/emissions")
+async def get_emissions():
+    """Get current emissions data"""
+    try:
+        cached = cache_service.get("emissions")
+        if cached:
+            return cached
+        
+        emissions = await taostats_service.get_emissions()
+        cache_service.set("emissions", emissions, ttl=60)
+        
+        return emissions
+        
+    except Exception as e:
+        logger.error(f"Error fetching emissions: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(
         "main:app",
-        host="127.0.0.1",
-        port=8000,
-        reload=True,
-        log_level="info"
+        host="0.0.0.0",
+        port=int(os.getenv("PORT", 8000)),
+        reload=os.getenv("ENV", "development") == "development"
     )
