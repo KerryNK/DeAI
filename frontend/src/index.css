@@ -3,10 +3,13 @@
 @tailwind utilities;
 
 /* ========================================
-   BASE LAYER - Black & White Theme
+   BASE LAYER - Pure Black Theme
    ======================================== */
 @layer base {
   html {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background-color: #000000;
+    color: #ffffff;
     @apply scroll-smooth;
   }
 
@@ -22,6 +25,15 @@
 
   .nav-link.active {
     @apply text-white bg-white/10 border-white/50 shadow-lg;
+  }
+}
+
+/* ========================================
+   ACCENT UTILITIES - Cyan/Blue Only
+   ======================================== */
+@layer components {
+  .btn-glow {
+    @apply shadow-xl hover:shadow-2xl shadow-cyan-500/20 hover:shadow-cyan-400/30;
   }
 }
 
