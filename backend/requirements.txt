@@ -21,7 +21,7 @@ web3==6.11.3
 
 # HTTP & Data
 requests==2.31.0
-pycoingecko==3.1.1
+pycoingecko==3.1.0
 
 # Utils
 cors==1.0.1
