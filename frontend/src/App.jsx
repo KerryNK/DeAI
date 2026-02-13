@@ -14,6 +14,9 @@ import Scoring from './pages/Scoring';
 import Portfolio from './pages/Portfolio';
 import History from './pages/History';
 import Wallet from './pages/Wallet';
+import Staking from './pages/Staking';
+import Strategies from './pages/Strategies';
+import ConnectWallet from './pages/ConnectWallet';
 
 // Setup wagmi
 const config = createConfig({
@@ -32,16 +35,19 @@ function AppContent() {
   return (
     <div className="min-h-screen bg-black text-white">
       <Navbar />
-      
+
       <div className={`transition-all duration-300 ${isAppRoute ? 'lg:ml-64' : ''}`}>
         {/* Sidebar for app routes */}
         {isAppRoute && <Sidebar />}
-        
+
         {/* Page content */}
         <div className="p-8 max-w-7xl mx-auto lg:pl-4 lg:pr-8">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/connect-wallet" element={<ConnectWallet />} />
             <Route path="/statistics" element={<Statistics />} />
+            <Route path="/staking" element={<Staking />} />
+            <Route path="/strategies" element={<Strategies />} />
             <Route path="/app/dashboard" element={<Dashboard />} />
             <Route path="/app/scoring" element={<Scoring />} />
             <Route path="/app/portfolio" element={<Portfolio />} />

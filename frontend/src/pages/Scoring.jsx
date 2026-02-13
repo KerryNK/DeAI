@@ -1,6 +1,6 @@
 export default function Scoring() {
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-white p-8">
+        <div className="min-h-screen bg-black text-white p-8">
             <div className="max-w-6xl mx-auto">
                 <h1 className="text-4xl font-bold mb-8">Scoring Methodology</h1>
                 <div className="bg-slate-800 p-8 rounded-lg border border-slate-700">
@@ -28,7 +28,7 @@ export default function Scoring() {
                                     <div className="text-sm text-slate-400">Excellent</div>
                                     <div className="text-xl font-bold">70+</div>
                                 </div>
-                                <div className="bg-cyan-900 p-4 rounded">
+                                <div className="bg-gray-800 p-4 rounded">
                                     <div className="text-sm text-slate-400">Good</div>
                                     <div className="text-xl font-bold">55-69</div>
                                 </div>

@@ -392,7 +392,7 @@ const DeAINexusTerminal = () => {
                                                             </div>
                                                         </div>
                                                         <div className="det-g">
-                                                            <div className="det-i"><div className="det-il">Fund. Value</div><div className="det-iv" style={{ color: 'var(--cyan)' }}>${s.fv}</div></div>
+                                                            <div className="det-i"><div className="det-il">Fund. Value</div><div className="det-iv" style={{ color: 'var(--accent)' }}>${s.fv}</div></div>
                                                             <div className="det-i"><div className="det-il">Price</div><div className="det-iv">${s.p.toFixed(2)}</div></div>
                                                             <div className="det-i"><div className="det-il">Premium</div><div className="det-iv" style={{ color: parseFloat(s.sp) < 15 ? 'var(--green)' : 'var(--rose)' }}>{parseFloat(s.sp) >= 0 ? '+' : ''}{s.sp}%</div></div>
                                                             <div className="det-i"><div className="det-il">Rev Coverage</div><div className="det-iv">{s.rc}%</div></div>
@@ -431,7 +431,7 @@ const DeAINexusTerminal = () => {
                                                         <div className="det-g3">
                                                             <div className="det-i"><div className="det-il">TAO Pool</div><div className="det-iv">${s.taoP}M</div></div>
                                                             <div className="det-i"><div className="det-il">Alpha</div><div className="det-iv">{s.alpP}Mα</div></div>
-                                                            <div className="det-i"><div className="det-il">Liquidity</div><div className="det-iv" style={{ color: 'var(--cyan)' }}>$ {s.liq}M</div></div>
+                                                            <div className="det-i"><div className="det-il">Liquidity</div><div className="det-iv" style={{ color: 'var(--accent)' }}>$ {s.liq}M</div></div>
                                                             <div className="det-i"><div className="det-il">Liq/MCap</div><div className="det-iv">{s.liqM}%</div></div>
                                                             <div className="det-i"><div className="det-il">24H Vol</div><div className="det-iv">${s.vol}M</div></div>
                                                             <div className="det-i"><div className="det-il">APY</div><div className="det-iv" style={{ color: 'var(--green)' }}>{s.apy}%</div></div>
@@ -455,7 +455,7 @@ const DeAINexusTerminal = () => {
                                                             </div>
                                                             <div className="det-i">
                                                                 <div className="det-il">Signal</div>
-                                                                <div className="det-iv" style={{ color: s.rec === 'Strong Buy' ? 'var(--green)' : s.rec === 'Buy' ? 'var(--cyan)' : s.rec === 'Hold' ? 'var(--amber)' : 'var(--rose)' }}>{s.rec}</div>
+                                                                <div className="det-iv" style={{ color: s.rec === 'Strong Buy' ? 'var(--green)' : s.rec === 'Buy' ? 'var(--accent)' : s.rec === 'Hold' ? 'var(--amber)' : 'var(--rose)' }}>{s.rec}</div>
                                                             </div>
                                                         </div>
                                                     </div>

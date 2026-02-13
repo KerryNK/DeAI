@@ -65,7 +65,7 @@ export default function Portfolio() {
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">Portfolio</h1>
           <p className="text-white/60">Your staking positions and earnings</p>
-          {isLoading && <p className="text-blue-400 text-sm mt-2">⚪ Loading positions...</p>}
+          {isLoading && <p className="text-gray-400 text-sm mt-2\">⚪ Loading positions...</p>}
           {hasError && <p className="text-yellow-400 text-sm mt-2">⚠️ Using cached data</p>}
         </div>
 

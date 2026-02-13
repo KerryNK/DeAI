@@ -1,6 +1,6 @@
 export default function History() {
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-white p-8">
+        <div className="min-h-screen bg-black text-white p-8">
             <div className="max-w-6xl mx-auto">
                 <h1 className="text-4xl font-bold mb-8">Historical Data</h1>
                 <div className="bg-slate-800 p-8 rounded-lg border border-slate-700">

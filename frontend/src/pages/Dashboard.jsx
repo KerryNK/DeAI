@@ -25,21 +25,21 @@ export default function Dashboard() {
         <div>
             {/* Live TAO Price Banner */}
             {priceData && (
-                <div className="bg-gradient-to-r from-violet-600/20 to-cyan-600/20 border border-violet-500/30 rounded-lg p-4 mb-6 mx-8 mt-8">
+                <div className="bg-gray-900 border border-gray-800 rounded p-4 mb-6 mx-8 mt-8">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-white/60 text-sm">TAO / USD</p>
+                            <p className="text-gray-400 text-sm">TAO / USD</p>
                             <p className="text-3xl font-bold text-white">
                                 ${priceData.price?.toFixed(2) || 'N/A'}
                             </p>
                         </div>
                         <div className="text-right">
-                            <p className={priceData.change24h >= 0 ? 'text-green-400 text-xl font-bold' : 'text-red-400 text-xl font-bold'}>
+                            <p className={priceData.change24h >= 0 ? 'text-green-500 text-xl font-bold' : 'text-red-500 text-xl font-bold'}>
                                 {priceData.change24h >= 0 ? '📈 +' : '📉 '}{priceData.change24h?.toFixed(2)}%
                             </p>
-                            <p className="text-white/60 text-sm">24h Change</p>
+                            <p className="text-gray-400 text-sm">24h Change</p>
                         </div>
-                        {priceLoading && <span className="text-blue-400 text-sm">Updating...</span>}
+                        {priceLoading && <span className="text-gray-400 text-sm">Updating...</span>}
                     </div>
                 </div>
             )}
