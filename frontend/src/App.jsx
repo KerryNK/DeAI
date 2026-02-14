@@ -17,6 +17,7 @@ import Wallet from './pages/Wallet';
 import Staking from './pages/Staking';
 import Strategies from './pages/Strategies';
 import ConnectWallet from './pages/ConnectWallet';
+import { WalletProvider } from './lib/walletContext';
 
 // Setup wagmi
 const config = createConfig({
@@ -66,7 +67,9 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
           <Router>
-            <AppContent />
+            <WalletProvider>
+              <AppContent />
+            </WalletProvider>
           </Router>
         </RainbowKitProvider>
       </QueryClientProvider>
