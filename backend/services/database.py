@@ -26,6 +26,17 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+class AuthUser(Base):
+    """Authenticated user model for email/password login"""
+    __tablename__ = "auth_users"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    email = Column(String, unique=True, nullable=False, index=True)
+    username = Column(String, unique=True, nullable=False, index=True)
+    password_hash = Column(String, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    last_login = Column(DateTime, nullable=True)
+
 class StakingPosition(Base):
     """Staking position model"""
     __tablename__ = "staking_positions"
@@ -223,6 +234,108 @@ class Database:
             return True
         except Exception as e:
             logger.error(f"Error adding transaction: {e}")
+            session.rollback()
+            return False
+        finally:
+            session.close()
+    
+    # ============================================
+    # AUTHENTICATION USER METHODS
+    # ============================================
+    
+    async def create_user(self, email: str, password_hash: str, username: str):
+        """Create a new authenticated user"""
+        session = self.get_session()
+        if not session:
+            return None
+        
+        try:
+            user = AuthUser(
+                email=email,
+                username=username,
+                password_hash=password_hash
+            )
+            session.add(user)
+            session.commit()
+            session.refresh(user)
+            
+            return {
+                "id": user.id,
+                "email": user.email,
+                "username": user.username,
+                "created_at": user.created_at.isoformat()
+            }
+        except Exception as e:
+            logger.error(f"Error creating user: {e}")
+            session.rollback()
+            return None
+        finally:
+            session.close()
+    
+    async def get_user_by_email(self, email: str):
+        """Get user by email"""
+        session = self.get_session()
+        if not session:
+            return None
+        
+        try:
+            user = session.query(AuthUser).filter_by(email=email).first()
+            if not user:
+                return None
+            
+            return {
+                "id": user.id,
+                "email": user.email,
+                "username": user.username,
+                "password_hash": user.password_hash,
+                "created_at": user.created_at.isoformat(),
+                "last_login": user.last_login.isoformat() if user.last_login else None
+            }
+        except Exception as e:
+            logger.error(f"Error getting user by email: {e}")
+            return None
+        finally:
+            session.close()
+    
+    async def get_user_by_id(self, user_id: int):
+        """Get user by ID"""
+        session = self.get_session()
+        if not session:
+            return None
+        
+        try:
+            user = session.query(AuthUser).filter_by(id=user_id).first()
+            if not user:
+                return None
+            
+            return {
+                "id": user.id,
+                "email": user.email,
+                "username": user.username,
+                "created_at": user.created_at.isoformat(),
+                "last_login": user.last_login.isoformat() if user.last_login else None
+            }
+        except Exception as e:
+            logger.error(f"Error getting user by ID: {e}")
+            return None
+        finally:
+            session.close()
+    
+    async def update_last_login(self, user_id: int):
+        """Update user's last login timestamp"""
+        session = self.get_session()
+        if not session:
+            return False
+        
+        try:
+            user = session.query(AuthUser).filter_by(id=user_id).first()
+            if user:
+                user.last_login = datetime.utcnow()
+                session.commit()
+                return True
+            return False
+        except Exception as e:
+            logger.error(f"Error updating last login: {e}")
             session.rollback()
             return False
         finally:

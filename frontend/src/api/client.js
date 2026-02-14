@@ -13,15 +13,30 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
 async function fetchAPI(endpoint, options = {}) {
   try {
     const url = `${API_BASE_URL}${endpoint}`;
+
+    // Get auth token from localStorage
+    const token = localStorage.getItem('auth_token');
+    const headers = {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    };
+
+    // Add auth token if available
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const response = await fetch(url, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
+      headers,
       ...options,
     });
 
     if (!response.ok) {
+      // Handle 401 Unauthorized
+      if (response.status === 401) {
+        localStorage.removeItem('auth_token');
+        window.location.href = '/login';
+      }
       throw new Error(`API Error: ${response.status} ${response.statusText}`);
     }
 
@@ -116,6 +131,74 @@ export const apiClient = {
    */
   async search(query) {
     return fetchAPI(`/search/${encodeURIComponent(query)}`);
+  },
+
+  // ===== PRICE & DASHBOARD =====
+
+  /**
+   * Get current TAO price and 24h change
+   */
+  async getTaoPrice() {
+    return fetchAPI('/tao/price');
+  },
+
+  /**
+   * Get dashboard overview data
+   */
+  async getDashboard() {
+    return fetchAPI('/dashboard');
+  },
+
+  // ===== AUTHENTICATION =====
+
+  /**
+   * Sign up a new user
+   * @param {string} email - User email
+   * @param {string} password - User password
+   * @param {string} username - User username
+   */
+  async signup(email, password, username) {
+    return fetchAPI('/auth/signup', {
+      method: 'POST',
+      body: JSON.stringify({ email, password, username }),
+    });
+  },
+
+  /**
+   * Log in a user
+   * @param {string} email - User email
+   * @param {string} password - User password
+   */
+  async login(email, password) {
+    return fetchAPI('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    });
+  },
+
+  /**
+   * Log out the current user
+   */
+  async logout() {
+    return fetchAPI('/auth/logout', {
+      method: 'POST',
+    });
+  },
+
+  /**
+   * Get current user information
+   */
+  async getCurrentUser() {
+    return fetchAPI('/auth/me');
+  },
+
+  /**
+   * Refresh JWT token
+   */
+  async refreshToken() {
+    return fetchAPI('/auth/refresh', {
+      method: 'POST',
+    });
   },
 };
 

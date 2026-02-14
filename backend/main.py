@@ -3,7 +3,7 @@ DeAI Backend - FastAPI Server
 Live TAO data, Redis caching, PostgreSQL integration
 """
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import httpx
@@ -20,6 +20,7 @@ from services.taostats import TAOStatsService
 from services.coingecko import CoinGeckoService
 from services.cache import CacheService
 from services.database import Database
+from services.auth import AuthService
 
 load_dotenv()
 
@@ -32,11 +33,12 @@ cache_service: Optional[CacheService] = None
 taostats_service: Optional[TAOStatsService] = None
 coingecko_service: Optional[CoinGeckoService] = None
 db: Optional[Database] = None
+auth_service: Optional[AuthService] = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Manage app lifecycle - startup and shutdown"""
-    global cache_service, taostats_service, coingecko_service, db
+    global cache_service, taostats_service, coingecko_service, db, auth_service
     
     # Startup
     logger.info("Starting DeAI Backend...")
@@ -47,6 +49,7 @@ async def lifespan(app: FastAPI):
         taostats_service = TAOStatsService()
         coingecko_service = CoinGeckoService()
         db = Database()
+        auth_service = AuthService(db)
         
         logger.info("All services initialized successfully")
         
@@ -279,6 +282,120 @@ async def get_emissions():
     except Exception as e:
         logger.error(f"Error fetching emissions: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+# ============================================
+# AUTHENTICATION ENDPOINTS
+# ============================================
+
+from pydantic import BaseModel, EmailStr
+
+class SignupRequest(BaseModel):
+    email: EmailStr
+    password: str
+    username: str
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+@app.post("/api/auth/signup")
+async def signup(request: SignupRequest):
+    """Create a new user account"""
+    try:
+        user = await auth_service.create_user(
+            email=request.email,
+            password=request.password,
+            username=request.username
+        )
+        
+        if not user:
+            raise HTTPException(status_code=400, detail="User creation failed")
+        
+        token = auth_service.create_access_token({"sub": user["id"], "email": user["email"]})
+        
+        return {
+            "token": token,
+            "user": {
+                "id": user["id"],
+                "email": user["email"],
+                "username": user["username"]
+            }
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Signup error: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@app.post("/api/auth/login")
+async def login(request: LoginRequest):
+    """Authenticate user and return JWT token"""
+    try:
+        user = await auth_service.authenticate_user(request.email, request.password)
+        
+        if not user:
+            raise HTTPException(status_code=401, detail="Invalid email or password")
+        
+        token = auth_service.create_access_token({"sub": user["id"], "email": user["email"]})
+        
+        return {
+            "token": token,
+            "user": {
+                "id": user["id"],
+                "email": user["email"],
+                "username": user["username"]
+            }
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Login error: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@app.post("/api/auth/logout")
+async def logout():
+    """Logout user (client-side token removal)"""
+    return {"message": "Logged out successfully"}
+
+@app.get("/api/auth/me")
+async def get_current_user(authorization: str = Header(None)):
+    """Get current user information from JWT token"""
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    token = authorization.replace("Bearer ", "")
+    payload = auth_service.verify_token(token)
+    
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    
+    user_id = payload.get("sub")
+    user = await auth_service.get_user_by_id(user_id)
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return {
+        "id": user["id"],
+        "email": user["email"],
+        "username": user["username"]
+    }
+
+@app.post("/api/auth/refresh")
+async def refresh_token(authorization: str = Header(None)):
+    """Refresh JWT token"""
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    token = authorization.replace("Bearer ", "")
+    payload = auth_service.verify_token(token)
+    
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    
+    new_token = auth_service.create_access_token({"sub": payload["sub"], "email": payload["email"]})
+    
+    return {"token": new_token}
 
 if __name__ == "__main__":
     import uvicorn
