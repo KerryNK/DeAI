@@ -32,12 +32,25 @@ async function fetchAPI(endpoint, options = {}) {
     });
 
     if (!response.ok) {
-      // Handle 401 Unauthorized
-      if (response.status === 401) {
+      // Parse error body for user-facing message (FastAPI returns { detail: string })
+      let message = `${response.status} ${response.statusText}`;
+      try {
+        const body = await response.json();
+        if (body?.detail) {
+          message = typeof body.detail === 'string' ? body.detail : body.detail[0]?.msg || message;
+        }
+      } catch (_) {
+        // ignore non-JSON body
+      }
+
+      // Only redirect to login on 401 when not already on auth endpoints (so login/signup errors stay on page)
+      const isAuthEndpoint = endpoint.includes('/auth/login') || endpoint.includes('/auth/signup');
+      if (response.status === 401 && !isAuthEndpoint) {
         localStorage.removeItem('auth_token');
         window.location.href = '/login';
       }
-      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+
+      throw new Error(message);
     }
 
     return await response.json();

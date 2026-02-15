@@ -61,6 +61,8 @@ async def lifespan(app: FastAPI):
             logger.info("Test user Admin@user.com created")
         except ValueError:
             pass  # Test user already exists
+        except Exception as e:
+            logger.warning(f"Could not create test user (auth may still work): {e}")
 
         logger.info("All services initialized successfully")
         
@@ -312,6 +314,8 @@ class LoginRequest(BaseModel):
 @app.post("/api/auth/signup")
 async def signup(request: SignupRequest):
     """Create a new user account"""
+    if not auth_service:
+        raise HTTPException(status_code=503, detail="Authentication service unavailable")
     try:
         user = await auth_service.create_user(
             email=request.email,
@@ -341,6 +345,8 @@ async def signup(request: SignupRequest):
 @app.post("/api/auth/login")
 async def login(request: LoginRequest):
     """Authenticate user and return JWT token"""
+    if not auth_service:
+        raise HTTPException(status_code=503, detail="Authentication service unavailable")
     try:
         user = await auth_service.authenticate_user(request.email, request.password)
         
