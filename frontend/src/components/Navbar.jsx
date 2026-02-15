@@ -10,7 +10,6 @@ export default function Navbar() {
   const { user, logout, isAuthenticated } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
 
-  // Fetch live TAO price
   const { data: priceData } = useQuery({
     queryKey: ['taoPrice'],
     queryFn: () => apiClient.getTaoPrice(),
@@ -25,58 +24,71 @@ export default function Navbar() {
   };
 
   return (
-    <div className="sticky top-0 z-50 bg-black border-b border-gray-900">
-      {/* Live Price Ticker */}
-      <div className="bg-gradient-to-r from-purple-900/20 to-blue-900/20 border-b border-gray-800/50 px-6 py-2">
-        <div className="max-w-7xl mx-auto flex items-center justify-between text-xs">
-          <div className="flex items-center gap-6">
+    <header className="sticky top-0 z-50 bg-inst-bg border-b border-inst-border">
+      {/* Institutional top bar – market data */}
+      <div className="bg-inst-bg-elevated border-b border-inst-border-subtle px-6 py-2.5">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-8 text-sm">
             {priceData && (
               <>
                 <div className="flex items-center gap-2">
-                  <span className="text-gray-500">TAO:</span>
-                  <span className="text-white font-semibold">${priceData.price?.toFixed(2) || 'N/A'}</span>
-                  <span className={priceData.change24h >= 0 ? 'text-green-500' : 'text-red-500'}>
+                  <span className="text-inst-text-muted font-medium">TAO</span>
+                  <span className="text-inst-text font-semibold tabular-nums">${priceData.price?.toFixed(2) || 'N/A'}</span>
+                  <span className={`text-xs font-medium tabular-nums ${priceData.change24h >= 0 ? 'text-inst-success' : 'text-inst-error'}`}>
                     {priceData.change24h >= 0 ? '▲' : '▼'} {Math.abs(priceData.change24h || 0).toFixed(2)}%
                   </span>
                 </div>
                 {priceData.volume24h && (
                   <div className="flex items-center gap-2">
-                    <span className="text-gray-500">VOL:</span>
-                    <span className="text-gray-300">{(priceData.volume24h / 1000000).toFixed(2)}M</span>
+                    <span className="text-inst-text-muted">24h Vol</span>
+                    <span className="text-inst-text tabular-nums">${(priceData.volume24h / 1000000).toFixed(2)}M</span>
                   </div>
                 )}
               </>
             )}
           </div>
-          <div className="text-gray-500">
-            Network: Bittensor
+          <div className="text-inst-text-faint text-xs font-medium tracking-wide uppercase">
+            Bittensor Network
           </div>
         </div>
       </div>
 
-      {/* Main Navigation */}
-      <nav className="px-6 py-4">
+      {/* Main navigation */}
+      <nav className="px-6 py-4 bg-inst-bg">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          {/* Logo */}
-          <Link to="/" className="text-xl font-bold text-white hover:text-gray-300 transition">
-            DeAI
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="w-9 h-9 rounded-lg bg-inst-bg-card border border-inst-border flex items-center justify-center group-hover:border-inst-accent/50 transition-colors">
+              <svg viewBox="0 0 24 24" className="w-5 h-5 text-inst-accent" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 6v6l4 2" />
+              </svg>
+            </div>
+            <span className="font-serif text-xl font-normal text-inst-text tracking-tight">DeAI</span>
+            <span className="font-sans text-xl font-semibold text-inst-accent">Nexus</span>
           </Link>
 
-          {/* Navigation Links */}
-          <div className="hidden md:flex space-x-8">
-            <Link to="/" className="text-gray-400 hover:text-white transition text-sm">Home</Link>
-            <Link to="/statistics" className="text-gray-400 hover:text-white transition text-sm">Statistics</Link>
-            <Link to="/strategies" className="text-gray-400 hover:text-white transition text-sm">Strategies</Link>
-            <Link to="/app/dashboard" className="text-gray-400 hover:text-white transition text-sm">Dashboard</Link>
-            <Link to="/app/portfolio" className="text-gray-400 hover:text-white transition text-sm">Portfolio</Link>
+          <div className="hidden md:flex items-center gap-1">
+            <Link to="/" className="px-4 py-2 text-sm font-medium text-inst-text-muted hover:text-inst-text rounded-lg hover:bg-inst-bg-card transition">
+              Home
+            </Link>
+            <Link to="/statistics" className="px-4 py-2 text-sm font-medium text-inst-text-muted hover:text-inst-text rounded-lg hover:bg-inst-bg-card transition">
+              Research
+            </Link>
+            <Link to="/strategies" className="px-4 py-2 text-sm font-medium text-inst-text-muted hover:text-inst-text rounded-lg hover:bg-inst-bg-card transition">
+              Strategies
+            </Link>
+            <Link to="/app/dashboard" className="px-4 py-2 text-sm font-medium text-inst-text-muted hover:text-inst-text rounded-lg hover:bg-inst-bg-card transition">
+              Dashboard
+            </Link>
+            <Link to="/app/portfolio" className="px-4 py-2 text-sm font-medium text-inst-text-muted hover:text-inst-text rounded-lg hover:bg-inst-bg-card transition">
+              Portfolio
+            </Link>
           </div>
 
-          {/* Right Side: Theme Toggle + User Account */}
-          <div className="flex items-center space-x-4">
-            {/* Theme Toggle */}
+          <div className="flex items-center gap-3">
             <button
               onClick={toggleTheme}
-              className="p-2 text-gray-400 hover:text-white transition rounded-lg hover:bg-gray-800"
+              className="p-2.5 text-inst-text-muted hover:text-inst-text rounded-lg hover:bg-inst-bg-card border border-transparent hover:border-inst-border transition"
               aria-label="Toggle theme"
             >
               {theme === 'dark' ? (
@@ -90,47 +102,34 @@ export default function Navbar() {
               )}
             </button>
 
-            {/* User Account / Sign In */}
             {isAuthenticated && user ? (
               <div className="relative">
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center space-x-3 px-4 py-2 bg-gray-900 rounded-lg border border-gray-800 text-sm hover:bg-gray-800 transition cursor-pointer"
+                  className="flex items-center gap-3 px-4 py-2.5 bg-inst-bg-card rounded-lg border border-inst-border text-sm hover:border-inst-border-subtle transition"
                 >
-                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                  <span className="text-gray-400 truncate max-w-[120px]">
+                  <span className="w-2 h-2 bg-inst-success rounded-full ring-2 ring-inst-bg"></span>
+                  <span className="text-inst-text-muted truncate max-w-[120px] font-medium">
                     {user.username || user.email}
                   </span>
-                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-inst-text-faint" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
 
-                {/* Dropdown Menu */}
                 {showUserMenu && (
-                  <div className="absolute right-0 mt-2 w-48 bg-gray-900 border border-gray-800 rounded-lg shadow-lg py-2 z-50">
-                    <div className="px-4 py-2 border-b border-gray-800">
-                      <p className="text-sm text-white font-medium">{user.username}</p>
-                      <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                  <div className="absolute right-0 mt-2 w-56 bg-inst-bg-card border border-inst-border rounded-xl shadow-xl py-2 z-50">
+                    <div className="px-4 py-3 border-b border-inst-border">
+                      <p className="text-sm font-semibold text-inst-text">{user.username}</p>
+                      <p className="text-xs text-inst-text-muted truncate">{user.email}</p>
                     </div>
-                    <Link
-                      to="/app/profile"
-                      className="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition"
-                      onClick={() => setShowUserMenu(false)}
-                    >
+                    <Link to="/app/profile" className="block px-4 py-2.5 text-sm text-inst-text-muted hover:text-inst-text hover:bg-inst-bg-elevated transition" onClick={() => setShowUserMenu(false)}>
                       Profile
                     </Link>
-                    <Link
-                      to="/app/settings"
-                      className="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition"
-                      onClick={() => setShowUserMenu(false)}
-                    >
+                    <Link to="/app/settings" className="block px-4 py-2.5 text-sm text-inst-text-muted hover:text-inst-text hover:bg-inst-bg-elevated transition" onClick={() => setShowUserMenu(false)}>
                       Settings
                     </Link>
-                    <button
-                      onClick={handleLogout}
-                      className="w-full text-left px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-gray-800 transition"
-                    >
+                    <button onClick={handleLogout} className="w-full text-left px-4 py-2.5 text-sm text-inst-error hover:bg-inst-bg-elevated transition">
                       Sign Out
                     </button>
                   </div>
@@ -139,7 +138,7 @@ export default function Navbar() {
             ) : (
               <Link
                 to="/login"
-                className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white rounded-lg transition text-sm font-medium"
+                className="px-5 py-2.5 bg-inst-accent hover:bg-sky-500 text-white rounded-lg text-sm font-semibold transition border border-transparent"
               >
                 Sign In
               </Link>
@@ -147,6 +146,6 @@ export default function Navbar() {
           </div>
         </div>
       </nav>
-    </div>
+    </header>
   );
 }

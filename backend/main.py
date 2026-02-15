@@ -50,7 +50,18 @@ async def lifespan(app: FastAPI):
         coingecko_service = CoinGeckoService()
         db = Database()
         auth_service = AuthService(db)
-        
+
+        # Ensure test login exists (Admin@user.com / Admin@123)
+        try:
+            await auth_service.create_user(
+                email="Admin@user.com",
+                password="Admin@123",
+                username="Admin"
+            )
+            logger.info("Test user Admin@user.com created")
+        except ValueError:
+            pass  # Test user already exists
+
         logger.info("All services initialized successfully")
         
         yield

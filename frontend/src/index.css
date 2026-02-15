@@ -3,19 +3,45 @@
 @tailwind utilities;
 
 /* ========================================
-   BASE LAYER - Minimal Dark Theme
+   INSTITUTIONAL DESIGN SYSTEM
+   DeAI Nexus – Trust, clarity, hierarchy
    ======================================== */
 @layer base {
   html {
-    font-family: 'Inter', -apple-system, sans-serif;
-    background-color: #000000;
-    color: #ffffff;
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+    background-color: #0a0f1a;
+    color: #e2e8f0;
     @apply scroll-smooth;
   }
 
   body {
-    @apply bg-black text-white antialiased;
+    @apply antialiased;
+    background-color: #0a0f1a;
+    color: #e2e8f0;
   }
+
+  /* Institutional heading font */
+  .font-institutional {
+    font-family: 'Instrument Serif', 'Georgia', serif;
+  }
+}
+
+/* Design tokens – institutional palette */
+:root {
+  --inst-bg: #0a0f1a;
+  --inst-bg-elevated: #0f1729;
+  --inst-bg-card: #131c2e;
+  --inst-border: #1e293b;
+  --inst-border-subtle: #1a2435;
+  --inst-text: #e2e8f0;
+  --inst-text-muted: #94a3b8;
+  --inst-text-faint: #64748b;
+  --inst-accent: #0ea5e9;
+  --inst-accent-hover: #38bdf8;
+  --inst-gold: #c9a227;
+  --inst-success: #10b981;
+  --inst-warning: #f59e0b;
+  --inst-error: #ef4444;
 }
 
 /* ========================================

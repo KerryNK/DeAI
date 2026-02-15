@@ -32,14 +32,28 @@ export default {
     theme: {
         extend: {
             // ========================================
-            // COLORS
+            // COLORS – Institutional
             // ========================================
             colors: {
+                // Institutional palette
+                inst: {
+                    bg: '#0a0f1a',
+                    'bg-elevated': '#0f1729',
+                    'bg-card': '#131c2e',
+                    border: '#1e293b',
+                    'border-subtle': '#1a2435',
+                    'text': '#e2e8f0',
+                    'text-muted': '#94a3b8',
+                    'text-faint': '#64748b',
+                    accent: '#0ea5e9',
+                    gold: '#c9a227',
+                    success: '#10b981',
+                    error: '#ef4444',
+                },
                 // Brand Colors
-                // Used for primary branding elements, CTAs, and key UI components
                 brand: {
-                    black: '#0A0A0F',      // Primary brand color - deep black
-                    gray: '#6B6B7F',       // Primary accent - medium gray
+                    black: '#0A0A0F',
+                    gray: '#6B6B7F',
                 },
 
                 // Gray Scale (formerly Purple)
@@ -143,6 +157,10 @@ export default {
                 '6xl': ['3.75rem', { lineHeight: '1' }],             // 60px
             },
 
+            fontFamily: {
+                sans: ['DM Sans', 'system-ui', '-apple-system', 'sans-serif'],
+                serif: ['Instrument Serif', 'Georgia', 'serif'],
+            },
             fontWeight: {
                 normal: '400',
                 medium: '500',

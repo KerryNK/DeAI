@@ -39,15 +39,13 @@ function AppContent() {
   const isAppRoute = location.pathname.startsWith('/app');
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-[var(--inst-bg)] text-[var(--inst-text)]">
       <Navbar />
 
       <div className={`transition-all duration-300 ${isAppRoute ? 'lg:ml-64' : ''}`}>
-        {/* Sidebar for app routes */}
         {isAppRoute && <Sidebar />}
 
-        {/* Page content */}
-        <div className="p-8 max-w-7xl mx-auto lg:pl-4 lg:pr-8">
+        <div className="p-6 md:p-8 max-w-7xl mx-auto lg:pl-4 lg:pr-8">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
